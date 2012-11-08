@@ -21,10 +21,12 @@ json_user_fan_page.txt
 Page for a specific user (set creator)
 http://drn57.polyvore.com/?.out=json
 json_user_creator_page.txt
+^^^^^ This is the same as a page for a fanvbv 
 
 Page (from the shopping section) with a lot of items on it (try to cross reference?)
 http://www.polyvore.com/cgi/shop?brand=Giambattista+Valli&category_id=41&query=&.out=json
 json_shopping_page.txt
+^^^^^ This one is not useful for our purposes. We can get the category tags from item page instead.
 
 """
 
@@ -38,7 +40,7 @@ file_list = [
 ]
 
 ########## Get the JSON and format it
-def get_JSON_string(filename):
+def get_JSON_dict(filename):
     f = open(filename)
     json_string = f.read()
     json_dict = json.loads(json_string)
@@ -57,9 +59,10 @@ def print_keys(json_dict):
     for k in list_of_keys:
         print k
 
-########## Pick which file to open
-def main():
+########## Command prompt
+def run_commands():
 
+    # List of files to pick from
     global file_list
     for i in range(0,len(file_list)):
         print str(i) + " ------> " + file_list[i]
@@ -67,6 +70,56 @@ def main():
     entered_index = int(raw_input("Which file do you want to open? "))
     file_to_open = file_list[entered_index]
 
-    print_formatted_JSON(get_JSON_string(file_to_open))
+    #Print the keys first, then JSON string
+    for i in range(0,10):
+        print "+"
 
-main()
+    print_keys(get_JSON_dict(file_to_open))
+
+    for i in range(0,10):
+        print "+"
+
+    print_formatted_JSON(get_JSON_dict(file_to_open))
+
+#########################################################
+#########################################################
+#########################################################
+
+def print_data_set():
+
+    filename = file_list[0]
+    polyvore = get_JSON_dict(filename)
+
+    d = {}
+
+    d['test'] = "test value"
+
+    # Basic stuff
+    d ['set_id'] = polyvore["collection"]["id"]
+        # See what else you can pull from the "collection" field
+
+    # Grabbing all the items in the set
+    d['num_set_items'] = len(polyvore["overlay_items"])
+    d['set_items'] = []
+    for i in range(d['num_set_items']):
+        item_id = polyvore["overlay_items"][i]['thing_id']
+        d['set_items'].append(item_id)
+        # Should this be pulled from the "collection" field instead?
+    
+
+    # Need to pull the fan ids
+    # But first need to get all the fan ids onto one page
+    d['num_fans'] = polyvore["fav_count"]
+
+
+    # Print out all the data at the end
+    for key, value in d.iteritems():
+        print "................."
+        print key
+        print value
+
+
+
+
+
+
