@@ -43,7 +43,9 @@ file_list = [
     "json_item_page.txt",
     "json_user_fan_page.txt",
     "json_user_creator_page.txt",
-    "json_shopping_page.txt"
+    "json_shopping_page.txt",
+    "json_fan_items_1.txt",
+    "json_fan_sets_1.txt"
 ]
 
 ########## Get the JSON and format it
@@ -99,8 +101,6 @@ def print_data_set():
 
     d = {}
 
-    d['test'] = "test value"
-
     # Basic stuff about the set
     d['set_id'] = polyvore["collection"]["id"]
     d['anchor'] = polyvore["collection"]["embed_anchor"]["anchor"]
@@ -109,6 +109,9 @@ def print_data_set():
     d['createdon'] = polyvore["collection"]["createdon"]
     d['score'] = polyvore["collection"]["score"]
     d['confirmed_tags'] = polyvore["confirmed_tags"]
+    d['creator_id'] = polyvore["collection"]["user_id"]
+    d['creator_name'] = polyvore["collection"]["user_name"]
+    d['imgurl'] = polyvore["collection"]["imgurl"]
 
     # Grabbing all the items in the set
     d['num_set_items_all'] = len(polyvore["overlay_items"])
@@ -127,10 +130,6 @@ def print_data_set():
             d['set_items_names'].append(item_name)
 
     d['num_set_items_valid'] = len(d['set_items'])
-    
-    # Info about the creator
-    d['creator_id'] = polyvore["collection"]["user_id"]
-    d['creator_name'] = polyvore["collection"]["user_name"]
 
     # Need to pull the fan ids
     # But first need to get all the fan ids onto one page
@@ -194,6 +193,156 @@ def get_all_fans(filename):
         fan_names.append(f["user_name"])
 
     return fan_ids
+
+
+def print_data_item():
+
+    filename = file_list[1]
+    polyvore = get_JSON_dict(filename)
+
+    d = {}
+
+    # Basic stuff
+    d['item_id'] = polyvore["thing"]["thing_id"]
+    d['save_count'] = polyvore["thing"]["save_count"]
+    d['imgurl'] = polyvore["thing"]["imgurl"]
+    d['seo-title'] = polyvore["thing"]["seo_title"]
+    d['title'] = polyvore["thing"]["title"]
+    d['anchor'] = polyvore["thing"]["shop_link"]["anchor"]
+    d['brand_id'] = polyvore["thing"]["brand_id"]
+    d['brand_name'] = polyvore["thing"]["brand"]
+    d['usd_price'] = polyvore["thing"]["usd_price"]
+    d['category_id'] = polyvore["thing"]["category_id"]
+    d['age'] = polyvore["thing"]["age"]
+
+    # More basic stuff that only exists if this is a sponsored item
+    if polyvore.get("thing_sponsored"):
+        d['retailer'] = polyvore["thing_sponsored"]["targeting"]["retailer"]
+        d['tags_sponsored'] = polyvore["thing_sponsored"]["targeting"]["cat"]
+
+
+    # Figure out how to structure/store this later
+    d['tags'] = polyvore["thing"]["tags"]
+
+    # Can pull all the fans that saved this item
+    # Do this now or later?
+
+    # Pull all the sets that this item is a part of
+    d['set_ids'] = []
+
+    for c in polyvore["collections"]:
+
+        if c.get("object_class","999") == "set":   # Check that it's a set and not a collection
+            set_id = c["id"]
+            d['set_ids'].append(set_id)
+
+    d['num_sets'] = len(d['set_ids'])
+
+    # Could also pull "related_things" but we'll ignore that for now
+    # These are items that are not grouped together in SETS (outfits) but just SIMILAR (interchangeable) with the item in question
+
+    # Print out all the data at the end
+    for key, value in d.iteritems():
+        print "................."
+        print key
+        print value
+
+
+def print_data_user():
+    
+    polyvore = get_JSON_dict("json_user_fan_page.txt")
+
+    d = {}
+
+    # Basic stuff
+    d['user_id'] = polyvore["user"]["user_id"]
+    d['user_name'] = polyvore["user"]["user_name"]
+    d['country'] = polyvore["user"]["country"]
+    d['createdon_ts'] = polyvore["user"]["createdon_ts"]
+
+    # ----- Pull the first page of sets that they created
+
+    d['sets_created'] = []
+
+    for p in polyvore["posts"]:
+
+        if p.get("object_class","999") == "set":
+            set_id = p["id"]
+            d['sets_created'].append(set_id)
+
+    # ----- Pull 100 items that this user saved
+    # Assume that we've already pulled the JSON strings by calling get_JSON_user_items_saved, etc
+    # They are now stored in text files, with name of text file linked to user
+    # Later we just have to get the right filename and pull from there
+    
+    d['saved_items'] = []
+
+    for i in range(1,5):
+
+        filename = "json_fan_items_" + str(i) + ".txt"
+        polyvore = get_JSON_dict(filename)
+
+        for item in polyvore["result"]["items"]:
+            item_id = item["thing_id"]
+            d['saved_items'].append(item_id)
+
+    # ----- Pull 100 items that this user saved
+    # Assume that we've already pulled the JSON strings by calling get_JSON_user_items_saved, etc
+    # They are now stored in text files, with name of text file linked to user
+    # Later we just have to get the right filename and pull from there
+
+    d['sets_liked'] = []
+
+    for i in range(1,3):
+
+        filename = "json_fan_sets_" + str(i) + ".txt"
+        polyvore = get_JSON_dict(filename)
+
+        for set in polyvore["result"]["items"]:
+            set_id = set["id"]
+            d['sets_liked'].append(set_id)
+
+    # ----- Print out all the data at the end
+    for key, value in d.iteritems():
+        print "................."
+        print key
+        print value
+
+
+def get_JSON_user_items_saved(user_id):
+
+    # Each page has 25 items. Pull 100 saved items for each user.
+
+    url_1 = "http://www.polyvore.com/cgi/browse.things?page="
+    url_2 = "&uid="
+    url_3 = "&.out=json"
+
+    for i in range(1,5):
+
+        json_string = url_1 + str(i) + url_2 + str(user_id) + url_3
+
+        # Test and fix later
+        print json_string
+        # Add later: Get the string, store it in a file
+
+
+def get_JSON_user_sets_liked(user_id):
+
+    # Each page has 25 items. Pull 50 sets that the user liked.
+
+    url_1 = "http://www.polyvore.com/cgi/browse.likes?filter=sets&page="
+    url_2 = "&uid="
+    url_3 = "&.out=json"
+
+    for i in range(1,3):
+
+        json_string = url_1 + str(i) + url_2 + str(user_id) + url_3
+
+        # Test and fix later
+        print json_string
+        # Add later: Get the string, store it in a file
+
+
 
 
 
