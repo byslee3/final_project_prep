@@ -1,0 +1,75 @@
+
+
+=============================
+
+Tuesday - Nov 6
+
+Reconstructing database schema by getting a JSON string from URL, then matching it against what shows up on the webpage. In order to understand what data there is in Polyvore.
+
+Sketching out ideas for UX and what to do with this data. Idea of outfit recommendations using k-nearest neighbors algorithm (would have to pull a dataset that forces there to be lots of overlap between users). Or, using the fact that Polyvore sets are human-curated groupings of items --> create a "social graph" of outfit items.
+
+What to do??
+
+Inspirational Polyvore set: http://www.polyvore.com/sin_t%C3%ADtulo_841/set?id=41830128#stream_box
+
+=============================
+
+Wednesday - Nov 7
+
+Talked about tree structure as way to store Polyvore data of connections between items.
+
+The core value of the Polyvore data set is human-curated groupings.
+
+Started going through the JSON strings and matching it to what's on the page. Coding up a dictionary to store all of these.
+
+UX idea and this is how you would incorporate some predictive functionality: Asking them to check off which items are in their closet. You can't realistically surface 100+ items to them all at once and ask them to choose which ones are in their closet. You have to start with 20 items, see which ones they check off as they have them, then continue to surface groups of 20, tailoring it based on what they said they had before.
+
+UX feature: After you know what they have in their closet -- use that data to suggest 3 items that would complete their closet -- multiply their amount of available outfit combos by 10x, just by adding 3 items.
+
+User has to experience feeling of "magic" -- and "trust." I want them to feel like they are talking to an very knowledgeable wardrobe stylist. Same feeling as going to the doctor. Like "tell me what your problem is, and I will take care of you." I want them to "trust" the computer and be delighted by the recommendations ("How did it read my mind?! I never would have thought of that, but it's exactly what I want!").
+
+=============================
+
+Thursday - Nov 8
+
+Continue to code stuff to get from {webpage} ---> {json string} ---> {Python dictionary that I can manipulate}
+Spending most time on understanding how they've structured their database.
+
+Issues addressed/encountered:
+* Set page only shows the first 18 fans. How to get all of them? --> Guessing the URL and pulling from that, wrote script to do this
+* Should I populate database as I go, or save all JSON strings and parse through it later? --> Save all strings in case I need to go back later.
+* Found out where Polyvore has this data (yay!): Denoting which set items are products versus graphics, some category tags and category ids for each item (need to figure out which is most predictive/relevant)
+
+
+* Should I pull the relationship between users who saved, and items?
+  Or just keep item <---> set relationship and focus on that?
+
+
+Issues still to resolve:
+* What's the right order for crawling through the pages?
+* Store the data in text files or CSV?
+* Set up database schema and write script to populate the database
+
+=============================
+
+Friday - Nov 9
+
+* Set up database using SQLite3 and SQLalchemy
+* Pull 10 top sets and save them in text files -- Pull sets from Tuesday so they have had maximum time for exposure -- In order to get all the possible fans
+* Write script to pull data from text files and store it in the database
+
+After we confirm this process works, write script to pull the top sets and store them in text files.
+
+
+
+
+
+=============================================
+=============== Summarized ==================
+=============================================
+
+Reconstruct the Polyvore database
+--- Understand structure of JSON strings and match to what's shown on the webpage
+--- Write script to traverse through linked pages, pull out JSON strings, and store them in text files. Need to traverse through linked pages (not just randomly) so we can force the data to have connections.
+--- Write script to parse JSON text files, pull out the data we need, and stick it in a database
+--- Create database schema and populate the database

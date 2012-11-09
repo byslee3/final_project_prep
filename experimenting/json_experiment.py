@@ -228,6 +228,7 @@ def print_data_item():
     # Do this now or later?
 
     # Pull all the sets that this item is a part of
+    # IMPORTANT: >>>>>> Need to pull the seo-title as well since that is required for the URL
     d['set_ids'] = []
 
     for c in polyvore["collections"]:
