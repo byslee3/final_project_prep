@@ -55,10 +55,13 @@ Issues still to resolve:
 Friday - Nov 9
 
 * Set up database using SQLite3 and SQLalchemy
-* Pull 10 top sets and save them in text files -- Pull sets from Tuesday so they have had maximum time for exposure -- In order to get all the possible fans
+* Script: Pulled 5 top sets and save them in text files -- Pull sets from Tuesday so they have had maximum time for exposure -- In order to get all the possible fans
+
+
+
 * Write script to pull data from text files and store it in the database
 
-After we confirm this process works, write script to pull the top sets and store them in text files.
+
 
 
 

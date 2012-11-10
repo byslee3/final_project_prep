@@ -32,7 +32,9 @@ def create_set_file(set_id, seo_title):
     target_file.close()
 
 
+def get_set_fans_url(set_id):
 
+    # Open up the relevant JSON file
 
 
 
