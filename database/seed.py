@@ -45,7 +45,17 @@ def populate_sets(batch):
 
         model.enter_new_set(db, set_id)
 
-populate_sets(batch_1)
+# populate_sets(batch_1)
+
+
+#####
+# Checking that we're able to get the fan URLs
+
+print polyvore.get_set_fans_url(62332524)
+print polyvore.get_set_fans_url(62332524)
+
+
+
 
 
 
