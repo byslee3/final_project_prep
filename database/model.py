@@ -19,6 +19,12 @@ COLUMNS_SET = [
 "num_items_valid"
 ]
 
+COLUMNS_SETS_FANS = [
+"set_id",
+"fan_id",
+"fan_name"
+]
+
 
 def connect_db():
     return sqlite3.connect("polyvore.db")
@@ -44,9 +50,26 @@ def enter_new_set(db, set_id):
     c = db.cursor()
     query = """INSERT INTO Sets VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
     c.execute(query, values_to_add)
-    db.commit()    
+    db.commit()
 
 
+def enter_new_sets_fans(db, set_id):
+
+    ## Update the Sets_Fans table
+    ## For a given set_id, enter all of the fan_ids and fan_names that are associated with it
+    ## The Sets_Fans table maps a many-to-many relationship between each set and users that Fanned the set
+
+    # For this set_id: Get a list of tuples, storing all the associated fan_ids and fan_names
+    values_to_add = polyvore.get_set_fans(set_id)
+
+    # Loop through all the values_to_add and insert them into database
+    c = db.cursor()
+    query = """INSERT INTO Sets_Fans VALUES(NULL, ?, ?, ?)"""
+
+    for v in values_to_add:
+        c.execute(query, (set_id, values_to_add[0], values_to_add[1]))
+
+    db.commit()
 
 
 
