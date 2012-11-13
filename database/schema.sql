@@ -22,7 +22,16 @@ create table Sets(
 create table Sets_Fans(
     id INTEGER PRIMARY KEY,
     set_id VARCHAR(64),
+    fan_id VARCHAR(64),
     fan_name VARCHAR(64)
+);
+
+
+create table Sets_Items(
+    id INTEGER PRIMARY KEY,
+    set_id VARCHAR(64),
+    item_id VARCHAR(64),
+    item_seo_title VARCHAR(64)
 );
 
 

@@ -67,7 +67,26 @@ def enter_new_sets_fans(db, set_id):
     query = """INSERT INTO Sets_Fans VALUES(NULL, ?, ?, ?)"""
 
     for v in values_to_add:
-        c.execute(query, (set_id, values_to_add[0], values_to_add[1]))
+        c.execute(query, (set_id, v[0], v[1]))
+
+    db.commit()
+
+
+def enter_new_sets_items(db, set_id):
+
+    ## Update the Sets_Items table
+    ## For a given set_id, enter all of the item_ids that are associated with it
+    ## The Sets_Items table maps a many-to-many relationship between each set and items that are in the set
+
+    # For this set_id: Get a list of tuples, storing all the associated fan_ids and fan_names
+    values_to_add = polyvore.get_set_items(set_id)
+
+    # Loop through all the values_to_add and insert them into database
+    c = db.cursor()
+    query = """INSERT INTO Sets_Items VALUES(NULL, ?, ?, ?)"""
+
+    for v in values_to_add:
+        c.execute(query, (set_id, v[0], v[1]))
 
     db.commit()
 

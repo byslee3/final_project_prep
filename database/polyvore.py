@@ -97,6 +97,58 @@ def create_set_fan_files(set_id):
         target_file.close()
 
 
+def get_user_url(user_name):
+
+    # Get the JSON location for any Polyvore user
+
+    url_1 = "http://"
+    url_2 = ".polyvore.com/?.out=json"
+
+    target_url = url_1 + user_name + url_2
+    return target_url
+
+
+def create_user_file(user_name):
+
+    # Grabs the JSON string for any Polyvore user, given their user name
+    user_url = get_user_url(user_name)
+    json_file = urllib.urlopen(user_url)
+    json_string = json_file.read()
+
+    # Create a file named after the user and write the JSON string to it
+    target_filename = "json-files/users/user-" + user_name + ".txt"
+    target_file = open(target_filename, 'w')
+    target_file.write(json_string)
+    target_file.close()
+
+
+def get_item_url(item_id, item_seo_title):
+
+    # Get the JSON location for any Polyvore item
+
+    url_1 = "http://www.polyvore.com/"
+    url_2 = "/thing?id="
+    url_3 = "&.out=json"
+
+    target_url = url_1 + item_seo_title + url_2 + str(item_id) + url_3
+    return target_url
+
+
+def create_item_file(item_id, item_seo_title):
+
+    # Grabs the JSON string for any Polyvore user, given their user name
+    item_url = get_item_url(item_id, item_seo_title)
+    json_file = urllib.urlopen(item_url)
+    json_string = json_file.read()
+
+    # Create a file named after the user and write the JSON string to it
+    target_filename = "json-files/items/item-" + str(item_id) + ".txt"
+    target_file = open(target_filename, 'w')
+    target_file.write(json_string)
+    target_file.close()
+
+
+
 ####################################
 ####### Reading stored files #######
 ####################################
@@ -146,6 +198,9 @@ def get_set_attributes(set_id):
     d['score'] = polyvore["collection"]["score"]
     d['pageviews'] = polyvore["collection"]["pageview"]
     d['num_fans'] = polyvore["fav_count"]
+    # ----- Pull only the basic attributes that will be put into the Sets table
+    # ----- Do not pull many-to-many relationships as those will be put in separate linkage tables
+    # ----- Those will be pulled in separate functions
 
     # Counting only the set items that are clothing/products
     d['num_items_all'] = len(polyvore["overlay_items"])
@@ -206,6 +261,45 @@ def get_set_fans(set_id):
             fan_names.append(f["user_name"])
 
     result = zip(fan_ids, fan_names)
+    return result
+
+
+def get_set_items(set_id):
+
+    ## This information is located directly in the JSON for each specific set
+    ## Returns a list of tuples with item_ids and item_seo_titles (need both for accessing Polyvore page)
+    ## This list will be used to populate the Sets_Items table, using a function in model.py
+
+    ## ----- Limitation:
+    ## ----- We only pull the items that are denoted as products by polyvore["overlay_items"][i]["is_product"] == 1
+    ## ----- This differentiates between background graphics and clothing/fashion products
+    ## ----- HOWEVER, some products are not tagged as products, because they are not available for sale online
+    ## ----- Our model/database will miss these products (but spot checking shows that all main relevant products are captured)
+
+    item_ids = []
+    item_seo_titles = []
+
+    # Open the appropriate JSON file and read from it
+    filename = "json-files/set-" + str(set_id) + ".txt"
+    polyvore = get_json_dict(filename)
+
+    # Iterate through all the items in the set
+    list_of_items = polyvore["overlay_items"]
+
+    for item in list_of_items:
+
+        # Check if it's a product or a graphic
+        if item.get("is_product",0) == 1:
+
+            item_id = item["thing_id"]
+            item_seo_title = item["seo_title"]
+
+            # Check for duplicates
+            if not item_id in item_ids:
+                item_ids.append(item_id)
+                item_seo_titles.append(item_seo_title)
+
+    result = zip(item_ids, item_seo_titles)
     return result
 
 
