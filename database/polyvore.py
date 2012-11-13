@@ -3,11 +3,17 @@ import math
 import urllib
 
 
-TEST1 = "62332524"
-TEST2 = "62652167"
-TEST3 = "62652303"
-TEST4 = "62655046"
-TEST5 = "62660147"
+SET1 = "62332524"
+SET2 = "62652167"
+SET3 = "62652303"
+SET4 = "62655046"
+SET5 = "62660147"
+
+FAN1 = "3339312"
+FAN2 = "3159094"
+FAN3 = "1231532"
+
+ITEM1 = "17109441"
 
 
 #############################
@@ -84,13 +90,11 @@ def create_set_fan_files(set_id):
     for i, url in enumerate(polyvore_urls):
 
         # Get the JSON string
-
         json_file = urllib.urlopen(url)
         json_string = json_file.read()
         json_dict = json.loads(json_string)
 
         # Save it to a text file
-
         target_filename = "json-files/set-fans-" + str(set_id) + "-p" + str(i+1) + ".txt"
         target_file = open(target_filename, 'w')
         target_file.write(json_string)
@@ -148,6 +152,84 @@ def create_item_file(item_id, item_seo_title):
     target_file.close()
 
 
+def get_user_sets_url(user_id):
+
+    # Returns a list of URLs where you can get the sets that a user Liked
+    # Each page has 25 sets. Pull 50 sets that the user Liked.
+    # Pull 2 pages. If the user has less than 2 pages, it will pull the last page multiple times.
+
+    url_1 = "http://www.polyvore.com/cgi/browse.likes?filter=sets&page="
+    url_2 = "&uid="
+    url_3 = "&.out=json"
+
+    target_urls = []
+
+    for i in range(1,3):
+
+        target_url = url_1 + str(i) + url_2 + str(user_id) + url_3
+        target_urls.append(target_url)
+
+    return target_urls
+
+
+def get_user_items_url(user_id):
+
+    # Returns a list of URLs where you can get the items that a user Liked
+    # Each page has 25 items. Pull 100 items that the user Liked.
+    # Pull 4 pages. If the user has less than 4 pages, it will pull the last page multiple times.
+
+    url_1 = "http://www.polyvore.com/cgi/browse.things?page="
+    url_2 = "&uid="
+    url_3 = "&.out=json"
+
+    target_urls = []
+
+    for i in range(1,5):
+
+        target_url = url_1 + str(i) + url_2 + str(user_id) + url_3
+        target_urls.append(target_url)
+
+    return target_urls
+
+
+def create_user_sets_files(user_id):
+
+    ## Pull down the JSON files from Polyvore
+    ## Write it to a text file. Another method will parse through text file later.
+    polyvore_urls = get_user_sets_url(user_id)
+
+    for i, url in enumerate(polyvore_urls):
+
+        # Get the JSON string
+        json_file = urllib.urlopen(url)
+        json_string = json_file.read()
+        json_dict = json.loads(json_string)
+
+        # Save it to a text file
+        target_filename = "json-files/user-sets-" + str(user_id) + "-p" + str(i+1) + ".txt"
+        target_file = open(target_filename, 'w')
+        target_file.write(json_string)
+        target_file.close()
+
+
+def create_user_items_files(user_id):
+
+    ## Pull down the JSON files from Polyvore
+    ## Write it to a text file. Another method will parse through text file later.
+    polyvore_urls = get_user_items_url(user_id)
+
+    for i, url in enumerate(polyvore_urls):
+
+        # Get the JSON string
+        json_file = urllib.urlopen(url)
+        json_string = json_file.read()
+        json_dict = json.loads(json_string)
+
+        # Save it to a text file
+        target_filename = "json-files/user-items-" + str(user_id) + "-p" + str(i+1) + ".txt"
+        target_file = open(target_filename, 'w')
+        target_file.write(json_string)
+        target_file.close()
 
 ####################################
 ####### Reading stored files #######
@@ -254,11 +336,13 @@ def get_set_fans(set_id):
         polyvore = get_json_dict(target_filename)
 
         # Iterate through all the fans stored on one page
-        list_of_fans = polyvore["result"]["items"]
+        for fan in polyvore["result"]["items"]:
 
-        for f in list_of_fans:
-            fan_ids.append(f["object_id"])
-            fan_names.append(f["user_name"])
+            # Check if fan_id = 0. If so, don't add, as that's a user with no account.
+            if not fan["object_id"] == 0:
+
+                fan_ids.append(fan["object_id"])
+                fan_names.append(fan["user_name"])
 
     result = zip(fan_ids, fan_names)
     return result
@@ -303,8 +387,100 @@ def get_set_items(set_id):
     return result
 
 
+def get_user_sets(user_id):
+
+    ## Assumes that text files storing this data have already been created with create_set_fan_files()
+    ## Returns a list of tuples with set_id and set_seo_title
+    ## Need both of these to get the Polyvore URL for a set
+    ## This list will be used to "reverse" populate the Sets_Fans table, using a function in model.py
+
+    set_ids = []
+    set_seo_titles = []
+
+    ## Iterate through 2 total pages. Each page stores 25 sets.
+    for i in range(1,3):
+
+        # Grab the JSON dictionary out of the text file
+        target_filename = "json-files/user-sets-" + str(user_id) + "-p" + str(i) + ".txt"
+        polyvore = get_json_dict(target_filename)
+
+        # Iterate through all the sets stored on one page
+        for set in polyvore["result"]["items"]:
+            set_id = set["id"]
+            set_seo_title = set["seo_title"]
+
+            # Check for duplicates (in case last page pulled more than once)
+            if not set_id in set_ids:
+                set_ids.append(set_id)
+                set_seo_titles.append(set_seo_title)
+
+    result = zip(set_ids, set_seo_titles)
+    return result
 
 
+def get_user_items(user_id):
+
+    ## Assumes that text files storing this data have already been created with create_set_fan_files()
+    ## Returns a list of tuples with item_id and item_seo_title
+    ## Need both of these to get the Polyvore URL for a set
+
+    item_ids = []
+    item_seo_titles = []
+
+    ## Iterate through 4 total pages. Each page stores 25 sets.
+    for i in range(1,5):
+
+        # Grab the JSON dictionary out of the text file
+        target_filename = "json-files/user-items-" + str(user_id) + "-p" + str(i) + ".txt"
+        polyvore = get_json_dict(target_filename)
+
+        # Iterate through all the sets stored on one page
+        for item in polyvore["result"]["items"]:
+
+            # Check if it's a product (using existence of price tag as a proxy)
+            if item.get("price",-1) > 0:
+
+                item_id = item["thing_id"]
+                item_seo_title = item["seo_title"]
+
+                # Check for duplicates (in case last page pulled more than once)
+                if not item_id in item_ids:
+
+                    item_ids.append(item_id)
+                    item_seo_titles.append(item_seo_title)
+
+    result = zip(item_ids, item_seo_titles)
+    return result
+
+
+def get_item_sets(item_id):
+
+    ## For a given item, returns all the sets that it is associated with
+    ## Returns a list of tuples with set_id and set_seo_title
+    ## This list will be used to "reverse" populate the Sets_Items table (stored as a separate Items_Sets table for now)
+
+    set_ids = []
+    set_seo_titles = []
+
+    # Open the appropriate JSON file and read from it
+    filename = "json-files/items/item-" + str(item_id) + ".txt"
+    polyvore = get_json_dict(filename)
+
+    # Iterate through all the collections associated with this item
+    for collection in polyvore["collections"]:
+
+        # Check that it's a set and not a collection
+        # Wanted to check if it's a fashion set, but that info is not included here
+        if collection.get("object_class", "999") == "set":
+
+            set_id = collection["id"]
+            set_seo_title = collection["seo_title"]
+
+            set_ids.append(set_id)
+            set_seo_titles.append(set_seo_title)
+
+    result = zip(set_ids, set_seo_titles)
+    return result
 
 
 

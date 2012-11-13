@@ -2,6 +2,22 @@ import sqlite3
 import polyvore
 
 
+# Variables for testing
+
+SET1 = "62332524"
+SET2 = "62652167"
+SET3 = "62652303"
+SET4 = "62655046"
+SET5 = "62660147"
+
+FAN1 = "3339312"
+FAN2 = "3159094"
+FAN3 = "1231532"
+
+ITEM1 = "17109441"
+
+# Column field headings
+
 COLUMNS_SET = [
 "set_id",
 "seo_title",
@@ -87,6 +103,62 @@ def enter_new_sets_items(db, set_id):
 
     for v in values_to_add:
         c.execute(query, (set_id, v[0], v[1]))
+
+    db.commit()
+
+
+def enter_new_fans_sets(db, fan_id):
+
+    ## Update the Fans_Sets table
+    ## For a given user_id, enter all of the set_ids and set_seo_titles that are associated with it
+    ## =====> Can be merged with Sets_Fans later but keep it separate for now
+
+    # For this fan_id: Get a list of tuples with (a) set_id (b) set_seo_title
+    values_to_add = polyvore.get_user_sets(fan_id)
+
+    # Loop through all the values_to_add and insert them into database
+    c = db.cursor()
+    query = """INSERT INTO Fans_Sets VALUES(NULL, ?, ?, ?)"""
+
+    for v in values_to_add:
+        c.execute(query, (fan_id, v[0], v[1]))
+
+    db.commit()
+
+
+def enter_new_users_items(db, user_id):
+
+    ## Update the Users_Items table
+    ## For a given user_id, enter all of the item_ids and item_seo_titles that are associated with it
+
+    # For this user_id: Get a list of tuples with (a) item_id (b) item_seo_title
+    values_to_add = polyvore.get_user_items(user_id)
+
+    # Loop through all the values_to_add and insert them into database
+    c = db.cursor()
+    query = """INSERT INTO Users_Items VALUES(NULL, ?, ?, ?)"""
+
+    for v in values_to_add:
+        c.execute(query, (user_id, v[0], v[1]))
+
+    db.commit()
+
+
+def enter_new_items_sets(db, item_id):
+
+    ## Update the Items_Sets table
+    ## For a given item_id, enter all of the set_ids and set_seo_titles that are associated with it
+    ## =====> Can be merged with Sets_Items later but keep it separate for now
+
+    # For this specific item_id: Get a list of tuples with (a) set_id (b) set_seo_title
+    values_to_add = polyvore.get_item_sets(item_id)
+
+    # Loop through all the values_to_add and insert them into database
+    c = db.cursor()
+    query = """INSERT INTO Items_Sets VALUES(NULL, ?, ?, ?)"""
+
+    for v in values_to_add:
+        c.execute(query, (item_id, v[0], v[1]))
 
     db.commit()
 

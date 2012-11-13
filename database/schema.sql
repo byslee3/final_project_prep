@@ -35,6 +35,29 @@ create table Sets_Items(
 );
 
 
+create table Fans_Sets(
+    id INTEGER PRIMARY KEY,
+    fan_id VARCHAR(64),
+    set_id VARCHAR(64),
+    set_seo_title VARCHAR(64)
+);
+
+
+create table Users_Items(
+    id INTEGER PRIMARY KEY,
+    user_id VARCHAR(64),
+    item_id VARCHAR(64),
+    item_seo_title VARCHAR(64)
+);
+
+
+create table Items_Sets(
+    id INTEGER PRIMARY KEY,
+    item_id VARCHAR(64),
+    set_id VARCHAR(64),
+    set_seo_title VARCHAR(64)
+);
+
 
 
 

@@ -138,6 +138,8 @@ def populate_sets_items(batch):
 # Get all of the unique fan names from the Sets_Fans table
 # Then pull the actual JSON files for each user and save to text file
 
+""" Delete this function at a later date, use SELECT DISTINCT instead """
+
 def list_of_unique_fans(batch):
 
     # Make a tuple of the relevant sets to pass into the query
@@ -183,6 +185,9 @@ def pull_users(batch):
 # Get all of the unique items from the Sets_Items table
 # Then pull the actual JSON files for each user and save to text file
 # Decided to re-write this function instead of using code abstraction for this one, need to return list of tuples instead of just one record
+# AAAARGH!!! Just remembered the SELECT DISTINCT function..... D:LKFJ*&#$*&^@#%)
+
+""" Delete this function at a later date, use SELECT DISTINCT instead """
 
 def list_of_unique_items(batch):
 
