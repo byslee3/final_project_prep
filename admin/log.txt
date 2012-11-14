@@ -47,19 +47,72 @@ Issues addressed/encountered:
 
 Issues still to resolve:
 * What's the right order for crawling through the pages?
-* Store the data in text files or CSV?
+    >>> resolved: see notebook sketches
+* Store the data in text files or CSV? >>> Text files as CSV gets weird if more than 2GB. Come up with a file directory system so that max 30K files in any folder.
 * Set up database schema and write script to populate the database
 
 =============================
 
 Friday - Nov 9
 
-* Set up database using SQLite3 and SQLalchemy
+* Set up database using SQLite3 and SQLalchemy. Decided not to use SQLalchemy for this part since most of it needs to be written directly in SQL anyway.
 * Script: Pulled 5 top sets and save them in text files -- Pull sets from Tuesday so they have had maximum time for exposure -- In order to get all the possible fans
+* Wrote script to pull data from text files and store it in the database
+* Started building out seed.py
 
+=============================
 
+Monday - Nov 12
 
-* Write script to pull data from text files and store it in the database
+For each object (set, user, item) the following code must be written (see sketch in notebook):
+-- Start with the id + seo title in some cases
+-- Guess the appropriate URL, looking at examples from Polyvore
+-- Grab the JSON file and write it to a text file
+-- Parse through JSON and grab the data that we need
+-- Write it to the SQL database
+-- Loop back to the beginning: from the SQL database pull everything that this object is linked to, and then start over at the beginning of these instructions
+
+Functions written today:
+* Given a set, pull all of the fan_ids associated with it.
+* Given a set, pull all of the item_ids associated with it.
+* Set up database and populated the test data into it.
+* Ran prelim analysis to test degree of overlap in original 5 sets.
+* Continue building out seed.py
+
+What is slowing me down -- thinking about how to structure the code. Concern over whether I am following best practices. Continually going back and revising code.
+
+=============================
+
+Tuesday - Nov 13
+
+Functions written today:
+* Given an item, pull all of the sets that it belongs to. Store in database.
+* Given a user, pull 50 of the sets they Liked. Pull 100 of the items they Liked.
+* Populate the database.
+* Come up with file directory scheme so that no folder has more than 30K files in it and revise previous code.
+* Clean up directories and files in preparation for pulling full dataset.
+
+In order to move faster -- unless it's very obvious, I am not worrying about code abstractions for now. The code is more verbose right now, but I can always go back and edit later.
+
+=============================
+
+Thursday - Nov 15
+
+ON DECK:
+* Crawl through pages and pull full dataset
+* Pull item and fan attributes. Make sure dataset is complete.
+* Post processing, data cleaning, checking
+* Make sure dataset is linked and use this to error check. Run prelim analytics to error check.
+
+NEED TO DISCUSS WHAT TO DO NEXT
+* Review code
+    Walk through what I did. Any major mistakes?
+    Best practices
+* Ideas for data mining and analyses
+* How to visualize the data mining
+* Do we need to use trees?
+* Brainstorm on front end
+
 
 
 
