@@ -17,6 +17,7 @@ FAN3 = "1231532"
 ITEM1 = "17109441"
 
 # Column field headings
+# Need this for pulling stuff out of the dictionary
 
 COLUMNS_SET = [
 "set_id",
@@ -34,13 +35,6 @@ COLUMNS_SET = [
 "num_items_all",
 "num_items_valid"
 ]
-
-COLUMNS_SETS_FANS = [
-"set_id",
-"fan_id",
-"fan_name"
-]
-
 
 def connect_db():
     return sqlite3.connect("polyvore.db")

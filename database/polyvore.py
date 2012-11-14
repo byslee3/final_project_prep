@@ -20,6 +20,35 @@ ITEM1 = "17109441"
 ####### JSON Requests #######
 #############################
 
+
+def create_filename(category, unique_id):
+
+    if not category == "user":
+
+        last_digit = unique_id[-1]
+
+        # Use this for Item and Set
+        filename = "json-files/%s/f%s/%s-%s.txt" %(category, last_digit, category, unique_id)
+        return filename
+
+    elif category == "user":
+
+        # Dump them all in one folder for now since these are indexed by alphabetical usernames
+
+        filename = "json-files/user/user-%s.txt" %(unique_id)
+        return filename
+
+
+def create_filename_paged(category, unique_id, page):
+
+    last_digit = unique_id[-1]
+
+    # Use this for Set-Fan, User-Item, User-Set
+    # Results for one object are stored on multiple pages
+    filename = "json-files/%s/f%s/%s-%s-p%s.txt" %(category, last_digit, category, unique_id, page)
+    return filename
+
+
 def get_set_url(set_id, seo_title):
 
     # Get the URL for any Polyvore set
@@ -36,15 +65,13 @@ def get_set_url(set_id, seo_title):
 
 def create_set_file(set_id, seo_title):
 
-    # Grabs the JSON string for any Polyvore set, given the set_id and seo_title
-    
+    # Grabs the JSON string for any Polyvore set, given the set_id and seo_title  
     set_url = get_set_url(set_id, seo_title)
     json_file = urllib.urlopen(set_url)
     json_string = json_file.read()
 
     # Create a file named after the set and write the JSON string to it
-
-    target_filename = "json-files/set-" + str(set_id) + ".txt"
+    target_filename = create_filename("set", set_id)
     target_file = open(target_filename, 'w')
     target_file.write(json_string)
     target_file.close()
@@ -95,7 +122,7 @@ def create_set_fan_files(set_id):
         json_dict = json.loads(json_string)
 
         # Save it to a text file
-        target_filename = "json-files/set-fans-" + str(set_id) + "-p" + str(i+1) + ".txt"
+        target_filename = create_filename_paged("set-fan", set_id, str(i+1))
         target_file = open(target_filename, 'w')
         target_file.write(json_string)
         target_file.close()
@@ -120,7 +147,7 @@ def create_user_file(user_name):
     json_string = json_file.read()
 
     # Create a file named after the user and write the JSON string to it
-    target_filename = "json-files/users/user-" + user_name + ".txt"
+    target_filename = create_filename("user", user_name)
     target_file = open(target_filename, 'w')
     target_file.write(json_string)
     target_file.close()
@@ -146,7 +173,7 @@ def create_item_file(item_id, item_seo_title):
     json_string = json_file.read()
 
     # Create a file named after the user and write the JSON string to it
-    target_filename = "json-files/items/item-" + str(item_id) + ".txt"
+    target_filename = create_filename("item", item_id)
     target_file = open(target_filename, 'w')
     target_file.write(json_string)
     target_file.close()
@@ -206,7 +233,7 @@ def create_user_sets_files(user_id):
         json_dict = json.loads(json_string)
 
         # Save it to a text file
-        target_filename = "json-files/user-sets-" + str(user_id) + "-p" + str(i+1) + ".txt"
+        target_filename = create_filename_paged("user-set", user_id, str(i+1))
         target_file = open(target_filename, 'w')
         target_file.write(json_string)
         target_file.close()
@@ -226,7 +253,7 @@ def create_user_items_files(user_id):
         json_dict = json.loads(json_string)
 
         # Save it to a text file
-        target_filename = "json-files/user-items-" + str(user_id) + "-p" + str(i+1) + ".txt"
+        target_filename = create_filename_paged("user-item", user_id, str(i+1))
         target_file = open(target_filename, 'w')
         target_file.write(json_string)
         target_file.close()
@@ -259,7 +286,7 @@ def get_set_attributes(set_id):
     d = {}
 
     # Open the appropriate JSON file and read from it
-    filename = "json-files/set-" + str(set_id) + ".txt"
+    filename = create_filename("set", set_id)
     polyvore = get_json_dict(filename)
 
     """Convert these to the correct data type"""
@@ -332,7 +359,7 @@ def get_set_fans(set_id):
     for i in range(d['guess_fan_pages']):
 
         # Grab the JSON dictionary out of the text file
-        target_filename = "json-files/set-fans-" + str(set_id) + "-p" + str(i+1) + ".txt"
+        target_filename = create_filename_paged("set-fan",set_id,str(i+1))
         polyvore = get_json_dict(target_filename)
 
         # Iterate through all the fans stored on one page
@@ -364,13 +391,11 @@ def get_set_items(set_id):
     item_seo_titles = []
 
     # Open the appropriate JSON file and read from it
-    filename = "json-files/set-" + str(set_id) + ".txt"
+    filename = create_filename("set", set_id)
     polyvore = get_json_dict(filename)
 
     # Iterate through all the items in the set
-    list_of_items = polyvore["overlay_items"]
-
-    for item in list_of_items:
+    for item in polyvore["overlay_items"]:
 
         # Check if it's a product or a graphic
         if item.get("is_product",0) == 1:
@@ -401,7 +426,7 @@ def get_user_sets(user_id):
     for i in range(1,3):
 
         # Grab the JSON dictionary out of the text file
-        target_filename = "json-files/user-sets-" + str(user_id) + "-p" + str(i) + ".txt"
+        target_filename = create_filename_paged("user-set", user_id, str(i))
         polyvore = get_json_dict(target_filename)
 
         # Iterate through all the sets stored on one page
@@ -431,7 +456,7 @@ def get_user_items(user_id):
     for i in range(1,5):
 
         # Grab the JSON dictionary out of the text file
-        target_filename = "json-files/user-items-" + str(user_id) + "-p" + str(i) + ".txt"
+        target_filename = create_filename_paged("user-item", user_id, str(i))
         polyvore = get_json_dict(target_filename)
 
         # Iterate through all the sets stored on one page
@@ -463,7 +488,7 @@ def get_item_sets(item_id):
     set_seo_titles = []
 
     # Open the appropriate JSON file and read from it
-    filename = "json-files/items/item-" + str(item_id) + ".txt"
+    filename = create_filename("item", item_id)
     polyvore = get_json_dict(filename)
 
     # Iterate through all the collections associated with this item
