@@ -1,10 +1,14 @@
 import model
 import polyvore
+import time
 
 # This should be read in consecutive order downwards
 # Records the steps that we took to seed the database
 
 """
+SEED BATCH
+Top 5 sets from Tuesday Nov 6
+
 http://www.polyvore.com/sin_t%C3%ADtulo_892/set?id=62332524
 http://www.polyvore.com/popular_trend_plaid_bag/set?id=62652167
 http://www.polyvore.com/am_who_because_my_choices/set?id=62652303
@@ -13,55 +17,40 @@ http://www.polyvore.com/untitled_205/set?id=62660147
 
 """
 
-#####
-# Started with first batch of top 5 sets
-# From Tuesday Nov 6
+
+#############################
+# Start with seed batch
+# Last pulled Thu Nov 15
+#############################
 
 batch_1 = [
-
 ("62332524", "sin_t%C3%ADtulo_892"),
 ("62652167", "popular_trend_plaid_bag"),
 ("62652303", "am_who_because_my_choices"),
 ("62655046", "untitled_237"),
 ("62660147", "untitled_205")
-
 ]
 
-
-#####
-# Pull this batch from Polyvore
-# Last run on Friday Nov 9
-# RUN THIS AS LITTLE AS POSSIBLE
-
 def pull_sets(batch):
+
+    counter = 0
 
     for set_id, seo_title in batch:
         
         polyvore.create_set_file(set_id, seo_title)
+        print "file %d created" % counter
+        time.sleep(1)
+        counter += 1
 
 # pull_sets(batch_1)
 
 
-#####
-# Populate the Sets table for this batch
+#############################
+# Pull the pages that store Sets --> Fans
+# Last pulled Thu Nov 15
+#############################
 
-def populate_sets(batch):
-
-    db = model.connect_db()
-
-    for set_id, seo_title in batch:
-
-        model.enter_new_set(db, set_id)
-
-# populate_sets(batch_1)
-
-
-#####
-# Pull the set_fans pages from Polyvore
-# Last run on Monday Nov 12
-# RUN THIS AS LITTLE AS POSSIBLE
-
-def pull_set_fans(batch):
+def pull_set_fan_linkages(batch):
 
     for set_id, seo_title in batch:
 
@@ -69,11 +58,13 @@ def pull_set_fans(batch):
 
         print "file successfully created"
 
-# pull_set_fans(batch_1)
+# pull_set_fan_linkages(batch_1)
 
 
-#####
-# Populate the Sets_Fans table for batch 1
+#############################
+# Populate the Sets_Fans table in the database
+# Last performed Thu Nov 15
+#############################
 
 def populate_sets_fans(batch):
     
@@ -86,8 +77,26 @@ def populate_sets_fans(batch):
 # populate_sets_fans(batch_1)
 
 
-#####
-# Preliminary analytics
+#############################
+# Populate the Sets_Items table in the database
+# Last performed Thu Nov 15
+#############################
+
+def populate_sets_items(batch):
+    
+    db = model.connect_db()
+
+    for set_id, seo_title in batch:
+
+        model.enter_new_sets_items(db, set_id)
+
+# populate_sets_items(batch_1)
+
+
+#############################
+# Prelim analytics
+# See degree of overlap between fans of top 5 sets
+#############################
 
 def print_overlap():
 
@@ -120,117 +129,268 @@ def print_overlap():
 # print_overlap()
 
 
-#####
-# Populate the Sets_Items table for batch 1
-
-def populate_sets_items(batch):
-    
-    db = model.connect_db()
-
-    for set_id, seo_title in batch:
-
-        model.enter_new_sets_items(db, set_id)
-
-# populate_sets_items(batch_1)
-
-
-#####
-# Get all of the unique fan names from the Sets_Fans table
-# Then pull the actual JSON files for each user and save to text file
-
-""" Delete this function at a later date, use SELECT DISTINCT instead """
+#############################
+# Pull a list of unique fan_names from the Sets_Fans table
+# Pull a list of unique items from the Sets_Items table
+# These can be abstracted into one function later on
+#############################
 
 def list_of_unique_fans(batch):
 
+    """ Return a list of unique fan names which will be passed to create_file function """
+
     # Make a tuple of the relevant sets to pass into the query
     relevant_sets = tuple([ b[0] for b in batch ])
     question_marks = ["?"] * len(relevant_sets)
     question_marks_string = ", ".join(question_marks)
 
-    # Connecting to database
-    db = model.connect_db()
-
     # Format and execute the SQL query
-    query_template = """SELECT * FROM Sets_Fans WHERE set_id IN (%s)"""
+    db = model.connect_db()
+    query_template = """SELECT DISTINCT fan_name FROM Sets_Fans WHERE set_id IN (%s)"""
     query = query_template % (question_marks_string)
     result = db.execute(query, relevant_sets)
     
-    # Get a list of records, where each item is a fan name
-    list_of_fans = []
-
-    for row in result.fetchall():
-
-        if not row[3] in list_of_fans:   # Check for duplicates
-
-            if not row[2] == "0":          # If fan_id is 0, means they don't have an actual account
-
-                list_of_fans.append(row[3])
-
+    # Get a list of records and return it
+    list_of_fans = [ row[0] for row in result.fetchall() ]
     return list_of_fans
 
 
-def pull_users(batch):
-
-    list_to_pull = list_of_unique_fans(batch)
-
-    for l in list_to_pull:
-        polyvore.create_user_file(l)
-        print "file created"
-
-# pull_users(batch_1)
-# RUN THIS TOMORROW ALL AT ONCE
-
-
-#####
-# Get all of the unique items from the Sets_Items table
-# Then pull the actual JSON files for each user and save to text file
-# Decided to re-write this function instead of using code abstraction for this one, need to return list of tuples instead of just one record
-# AAAARGH!!! Just remembered the SELECT DISTINCT function..... D:LKFJ*&#$*&^@#%)
-
-""" Delete this function at a later date, use SELECT DISTINCT instead """
-
 def list_of_unique_items(batch):
 
+    """ Return a list of unique items as (item_id, item_seo_title) which will be passed to create_file function """
+
     # Make a tuple of the relevant sets to pass into the query
-    relevant_sets = tuple([ b[0] for b in batch ])
+    relevant_sets = tuple([  b[0] for b in batch  ])
     question_marks = ["?"] * len(relevant_sets)
     question_marks_string = ", ".join(question_marks)
 
-    # Connecting to database
-    db = model.connect_db()
-
     # Format and execute the SQL query
-    query_template = """SELECT * FROM Sets_Items WHERE set_id IN (%s)"""
+    db = model.connect_db()
+    query_template = """SELECT DISTINCT item_id, item_seo_title FROM Sets_Items WHERE set_id IN (%s)""" 
     query = query_template % (question_marks_string)
     result = db.execute(query, relevant_sets)
-    
-    # Get a list of records, where each item is a fan name
-    list_of_item_ids = []
-    list_of_item_seo_titles = []
 
-    for row in result.fetchall():
-
-        if not row[2] in list_of_item_ids:  # Check for duplicates
-                                            # We need to delay zipping until the end b/c of this.
-
-            list_of_item_ids.append(row[2])
-            list_of_item_seo_titles.append(row[3])
-
-    list_of_items = zip(list_of_item_ids, list_of_item_seo_titles)
-
+    # Get a list of records and return it
+    list_of_items = [ row for row in result.fetchall() ]
     return list_of_items
 
 
-def pull_items(batch):
+#############################
+# Pull all the Fans associated with a given set
+# Pull all the Items associated with a given set
+# Last performed Thu Nov 15
+#############################
 
-    list_to_pull = list_of_unique_items(batch)
+list_of_fan_names = list_of_unique_fans(batch_1)    # 1171 records
+list_of_items = list_of_unique_items(batch_1)       # 32 records
 
-    for l in list_to_pull:
-        polyvore.create_item_file(l)
-        print "file created"
 
-# pull_items(batch_1)
-# RUN THIS TOMORROW ALL AT ONCE
+def pull_users(list_of_fan_names):
+
+    counter = 0
+
+    for name in list_of_fan_names:
+
+        polyvore.create_user_file(name)
+        print "file %d created" % counter
+        time.sleep(1)
+        counter += 1
+
+
+def pull_items(list_of_items):
+
+    counter = 0
+
+    for item_id, item_seo_title in list_of_items:
+
+        polyvore.create_item_file(item_id, item_seo_title)
+        print "file %d created" % counter
+        time.sleep(1)
+        counter += 1
+
+
+# pull_users(list_of_fan_names) ---> last run Nov 15
+# pull_items(list_of_items) ---> last run Nov 15
+
+
+#############################
+# Enter the Fans into the database
+# Assign them as Level 2
+# But break it up into Level 2.1, 2.2, 2.3 so you can run them in smaller batches
+#############################
+
+# -----> Populated on Nov 15
+
+def whatever():
+
+    db = model.connect_db()
+
+    for i in range(0, 300):
+        print list_of_fan_names[i]
+        model.enter_new_user(db, list_of_fan_names[i], 2.1)
+
+    for i in range(300, 600):
+        print list_of_fan_names[i]
+        model.enter_new_user(db, list_of_fan_names[i], 2.2)
+
+    for i in range(600, 900):
+        print list_of_fan_names[i]
+        model.enter_new_user(db, list_of_fan_names[i], 2.3)
+
+    for i in range(900, len(list_of_fan_names)):
+        print list_of_fan_names[i]
+        model.enter_new_user(db, list_of_fan_names[i], 2.4)
+
+#############################
+# Enter the Items into the database
+# Assign them as Level 2
+#############################
+
+def populate_items(item_list, level):
+
+    db = model.connect_db()
+
+    for item_id, item_seo_title in item_list:
+
+        print item_id
+
+        model.enter_new_item(db, item_id, level)
+
+
+# populate_items(list_of_items, 2) --> last run Nov 15
+
+
+def unique_item_id(batch):
+
+    # SELECT query based on batch = 1
+    # Copy the list_of_unique_items function above
+    # For now, do the shortcut
+
+    result = [  item[0] for item in list_of_unique_items(batch)  ]
+    return result
+
+
+#############################
+# Populate the Items_Sets table in the database
+# Tag all these records with level = 2
+# Last performed Thu Nov 15
+#############################
+
+list_1 = unique_item_id(batch_1)
+
+def populate_items_sets(list_of_ids):
+
+    db = model.connect_db()
+
+    for item_id in list_of_ids:
+
+        model.enter_new_items_sets(db, item_id)
+
+# populate_items_sets(list_1)
+
+
+#############################
+# Get a list of unique sets from Items_Sets
+# Last performed Thu Nov 15
+#############################
+
+def list_of_unique_sets(level):
+
+    """ Return a list of unique sets as (set_id, set_seo_title) which will be passed to create_file function """
+
+    # Format and execute the SQL query
+    db = model.connect_db()
+    query = """SELECT DISTINCT set_id, set_seo_title FROM Items_Sets WHERE level = ?"""
+    result = db.execute(query, (level,))
+
+    # Get a list of records and return it
+    list_of_sets = [ row for row in result.fetchall() ]
+    return list_of_sets
+
+
+#############################
+# Pull all the sets
+# Assign them to Level 3
+# Last performed Thu Nov 15
+#############################
+
+level_3 = list_of_unique_sets(2)
+
+# pull_sets(level_3) ---> last run Nov 15
+
+
+#############################
+# Enter the seed sets and the Level 3 sets into the database
+#############################
+
+# -----> Populated Nov 15
+
+def whatever2():
+
+    db = model.connect_db()
+
+    for set_id, set_seo_title in batch_1:
+        try:
+            model.enter_new_set(db, set_id, 1)
+        except IOError:
+            print "No file exists (likely Unicode Error)"
+
+    for set_id, set_seo_title in level_3:
+        try:
+            model.enter_new_set(db, set_id, 3)
+        except IOError:
+            print "No file exists (likely Unicode Error)"
+
+
+#############################
+# Grab all the Fan --> Item relationships from Level 2
+#############################
+
+
+db = model.connect_db()
+
+query1 = """SELECT DISTINCT user_id FROM Users WHERE level = 2.1"""
+query2 = """SELECT DISTINCT user_id FROM Users WHERE level = 2.2"""
+query3 = """SELECT DISTINCT user_id FROM Users WHERE level = 2.3"""
+query4 = """SELECT DISTINCT user_id FROM Users WHERE level = 2.4"""
+
+result1 = db.execute(query1)
+result2 = db.execute(query2)
+result3 = db.execute(query3)
+result4 = db.execute(query4)
+
+list_fans_1 = [  row[0] for row in result1.fetchall()  ]
+list_fans_2 = [  row[0] for row in result2.fetchall()  ]
+list_fans_3 = [  row[0] for row in result3.fetchall()  ]
+list_fans_4 = [  row[0] for row in result4.fetchall()  ]
+
+# print list_fans_1
+# print list_fans_2
+# print list_fans_3
+# print list_fans_4
+# print len(list_fans_1)
+# print len(list_fans_2)
+# print len(list_fans_3)
+# print len(list_fans_4)
+
+# for i, user_id in enumerate(list_fans_4):
+
+#     polyvore.create_user_items_files(user_id)
+#     print "file %d created" % i
+#     time.sleep(.5)
+
+# -----> Ran all of this on Nov 15
+
+
+
+
+
+
+
+
+
+
+
 
 
 

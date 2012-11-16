@@ -65,16 +65,21 @@ def get_set_url(set_id, seo_title):
 
 def create_set_file(set_id, seo_title):
 
-    # Grabs the JSON string for any Polyvore set, given the set_id and seo_title  
-    set_url = get_set_url(set_id, seo_title)
-    json_file = urllib.urlopen(set_url)
-    json_string = json_file.read()
+    try:
+        # Grabs the JSON string for any Polyvore set, given the set_id and seo_title  
+        set_url = get_set_url(set_id, seo_title)
+        json_file = urllib.urlopen(set_url)
+        json_string = json_file.read()
+        json_file.close()
 
-    # Create a file named after the set and write the JSON string to it
-    target_filename = create_filename("set", set_id)
-    target_file = open(target_filename, 'w')
-    target_file.write(json_string)
-    target_file.close()
+        # Create a file named after the set and write the JSON string to it
+        target_filename = create_filename("set", set_id)
+        target_file = open(target_filename, 'w')
+        target_file.write(json_string)
+        target_file.close()
+
+    except UnicodeError:
+        pass
 
 
 def get_set_fans_url(set_id):
@@ -116,16 +121,21 @@ def create_set_fan_files(set_id):
 
     for i, url in enumerate(polyvore_urls):
 
-        # Get the JSON string
-        json_file = urllib.urlopen(url)
-        json_string = json_file.read()
-        json_dict = json.loads(json_string)
+        try:
+            # Get the JSON string
+            json_file = urllib.urlopen(url)
+            json_string = json_file.read()
+            json_dict = json.loads(json_string)
+            json_file.close()
 
-        # Save it to a text file
-        target_filename = create_filename_paged("set-fan", set_id, str(i+1))
-        target_file = open(target_filename, 'w')
-        target_file.write(json_string)
-        target_file.close()
+            # Save it to a text file
+            target_filename = create_filename_paged("set-fan", set_id, str(i+1))
+            target_file = open(target_filename, 'w')
+            target_file.write(json_string)
+            target_file.close()
+
+        except UnicodeError:
+            pass
 
 
 def get_user_url(user_name):
@@ -141,16 +151,22 @@ def get_user_url(user_name):
 
 def create_user_file(user_name):
 
-    # Grabs the JSON string for any Polyvore user, given their user name
-    user_url = get_user_url(user_name)
-    json_file = urllib.urlopen(user_url)
-    json_string = json_file.read()
+    try:
+        # Grabs the JSON string for any Polyvore user, given their user name
+        user_url = get_user_url(user_name)
+        json_file = urllib.urlopen(user_url)
+        json_string = json_file.read()
+        json_file.close()
 
-    # Create a file named after the user and write the JSON string to it
-    target_filename = create_filename("user", user_name)
-    target_file = open(target_filename, 'w')
-    target_file.write(json_string)
-    target_file.close()
+        # Create a file named after the user and write the JSON string to it
+        target_filename = create_filename("user", user_name)
+        target_file = open(target_filename, 'w')
+        target_file.write(json_string)
+        target_file.close()
+
+    except UnicodeError:
+        pass
+
 
 
 def get_item_url(item_id, item_seo_title):
@@ -167,16 +183,21 @@ def get_item_url(item_id, item_seo_title):
 
 def create_item_file(item_id, item_seo_title):
 
-    # Grabs the JSON string for any Polyvore user, given their user name
-    item_url = get_item_url(item_id, item_seo_title)
-    json_file = urllib.urlopen(item_url)
-    json_string = json_file.read()
+    try:
+        # Grabs the JSON string for any Polyvore user, given their user name
+        item_url = get_item_url(item_id, item_seo_title)
+        json_file = urllib.urlopen(item_url)
+        json_string = json_file.read()
+        json_file.close()
 
-    # Create a file named after the user and write the JSON string to it
-    target_filename = create_filename("item", item_id)
-    target_file = open(target_filename, 'w')
-    target_file.write(json_string)
-    target_file.close()
+        # Create a file named after the user and write the JSON string to it
+        target_filename = create_filename("item", item_id)
+        target_file = open(target_filename, 'w')
+        target_file.write(json_string)
+        target_file.close()
+
+    except UnicodeError:
+        pass
 
 
 def get_user_sets_url(user_id):
@@ -227,16 +248,21 @@ def create_user_sets_files(user_id):
 
     for i, url in enumerate(polyvore_urls):
 
-        # Get the JSON string
-        json_file = urllib.urlopen(url)
-        json_string = json_file.read()
-        json_dict = json.loads(json_string)
+        try:
+            # Get the JSON string
+            json_file = urllib.urlopen(url)
+            json_string = json_file.read()
+            json_dict = json.loads(json_string)
+            json_file.close()
 
-        # Save it to a text file
-        target_filename = create_filename_paged("user-set", user_id, str(i+1))
-        target_file = open(target_filename, 'w')
-        target_file.write(json_string)
-        target_file.close()
+            # Save it to a text file
+            target_filename = create_filename_paged("user-set", user_id, str(i+1))
+            target_file = open(target_filename, 'w')
+            target_file.write(json_string)
+            target_file.close()
+
+        except UnicodeError:
+            pass
 
 
 def create_user_items_files(user_id):
@@ -247,16 +273,22 @@ def create_user_items_files(user_id):
 
     for i, url in enumerate(polyvore_urls):
 
-        # Get the JSON string
-        json_file = urllib.urlopen(url)
-        json_string = json_file.read()
-        json_dict = json.loads(json_string)
+        try:
+            # Get the JSON string
+            json_file = urllib.urlopen(url)
+            json_string = json_file.read()
+            json_dict = json.loads(json_string)
+            json_file.close()
 
-        # Save it to a text file
-        target_filename = create_filename_paged("user-item", user_id, str(i+1))
-        target_file = open(target_filename, 'w')
-        target_file.write(json_string)
-        target_file.close()
+            # Save it to a text file
+            target_filename = create_filename_paged("user-item", user_id, str(i+1))
+            target_file = open(target_filename, 'w')
+            target_file.write(json_string)
+            target_file.close()
+
+        except UnicodeError:
+            pass
+
 
 ####################################
 ####### Reading stored files #######
@@ -278,6 +310,73 @@ def get_json_dict(filename):
     f.close()
 
     return json_dict
+
+
+def get_item_attributes(item_id):
+
+    # Returns the item attributes as a dictionary
+    d = {}
+
+    # Open the appropriate JSON file and read from it
+    filename = create_filename("item", item_id)
+    polyvore = get_json_dict(filename)
+
+    """Convert these to the correct data type"""
+    """**************************************"""
+    """**************************************"""
+    """**************************************"""
+
+    # Pull basic item attributes from the JSON dict
+    d['item_id'] = polyvore["thing"]["thing_id"]
+    d['seo_title'] = polyvore["thing"]["seo_title"]
+    d['title'] = polyvore["thing"]["title"]
+    d['age'] = polyvore["thing"]["age"]
+    d['imgurl'] = polyvore["thing"]["imgurl"]
+    d['save_count'] = polyvore["thing"]["save_count"]
+    d['category_id'] = polyvore["thing"]["category_id"]
+    d['brand_id'] = polyvore["thing"]["brand_id"]
+    d['brand_name'] = polyvore["thing"]["brand"]
+    d['usd_price'] = polyvore["thing"].get("usd_price", -1)   # Getting a key error when we try to pull usd_price?
+
+    # This may or may not exist for all objects (?)
+    if polyvore["thing"].get("shop_link"):
+        d['anchor'] = polyvore["thing"]["shop_link"].get("anchor", None)
+    else:
+        d['anchor'] = None
+
+    # More basic stuff that only exists if this is a sponsored item
+    if polyvore.get("thing_sponsored"):
+        d['retailer'] = polyvore["thing_sponsored"]["targeting"]["retailer"]
+        # d['tags_sponsored'] = polyvore["thing_sponsored"]["targeting"]["cat"]
+    else:
+        d['retailer'] = "0"
+    
+    # Each item also has tags, but these will have to be pulled separately and stored in an Item-Tag linkage table. Many to many relationship.
+    # d['tags'] = polyvore["thing"]["tags"]   
+
+    return d
+
+def get_user_attributes(user_name):
+
+    # Returns the item attributes as a dictionary
+    d = {}
+
+    # Open the appropriate JSON file and read from it
+    filename = "json-files/user/user-" + str(user_name) + ".txt"  # Can't use % method because some usernames have numbers in them
+    polyvore = get_json_dict(filename)
+
+    """Convert these to the correct data type"""
+    """**************************************"""
+    """**************************************"""
+    """**************************************"""
+
+    # Basic stuff
+    d['user_id'] = polyvore["user"]["user_id"]
+    d['user_name'] = polyvore["user"]["user_name"]
+    d['country'] = polyvore["user"]["country"]
+    d['createdon_ts'] = polyvore["user"]["createdon_ts"]
+
+    return d
 
 
 def get_set_attributes(set_id):
