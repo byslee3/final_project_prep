@@ -205,7 +205,7 @@ def pull_items(list_of_items):
 
         polyvore.create_item_file(item_id, item_seo_title)
         print "file %d created" % counter
-        time.sleep(1)
+        time.sleep(.25)
         counter += 1
 
 
@@ -382,13 +382,99 @@ list_fans_4 = [  row[0] for row in result4.fetchall()  ]
 # -----> Ran all of this on Nov 15
 
 
+#############################
+# Take all the Fan-Item relationships and put them into the database at Level 2
+#############################
+
+# for fan_id in list_fans_4:
+#     model.enter_new_users_items(db, fan_id, 2)
+
+# -----> Populated the database on Nov 16
+
+
+#############################
+# Get the list of unique items
+#############################
+
+table = "Users_Items"
+col = "item_id"
+col1 = "item_id"
+col2 = "item_seo_title"
+level = 2
+
+
+def unique_records_onecol(table, col, level):
+
+    # Format and execute the SQL query
+    db = model.connect_db()
+    query_template = """SELECT DISTINCT (%s) FROM (%s) WHERE level = (%d)""" 
+    query = query_template % (col, table, level)
+    result = db.execute(query)
+
+    # Get a list of records and return it
+    list_of_items = [ row[0] for row in result.fetchall() ]
+    return list_of_items
+
+
+def unique_records_twocol(table, col1, col2, level):
+
+    # Format and execute the SQL query
+    db = model.connect_db()
+    query_template = """SELECT DISTINCT (%s), (%s) FROM (%s) WHERE level = (%d)""" 
+    query = query_template % (col1, col2, table, level)
+    result = db.execute(query)
+
+    # Get a list of records and return it
+    list_of_items = [ row for row in result.fetchall() ]
+    return list_of_items
 
 
 
+#############################
+# Pull down the item files in batches
+#############################
+
+# 43045 unique records
+list_to_pull = unique_records_twocol("Users_Items", "item_id", "item_seo_title", 2)
+
+# split the list to pull into batches of approx 5K
+
+l0 = []
+l1 = []
+l2 = []
+l3 = []
+l4 = []
+l5 = []
+l6 = []
+l7 = []
+l8 = []
+l9 = []
+
+temp_dict = {'0': l0, '1': l1, '2':l2, '3': l3, '4': l4, '5':l5, '6': l6, '7':l7, '8':l8, '9':l9}
+
+for tup in list_to_pull:
+
+    lastnum = tup[0][-1]
+
+    target_list = temp_dict[lastnum]
+
+    target_list.append(tup)
 
 
+#### Run each list through this once
+#### Last run on Nov 16
+
+# pull_items(l0) --> already ran l0
+
+# still need to run l1 through l9 which will take approx 3 hours
 
 
+#############################
+# Enter the items into the database with Level 3
+#############################
+
+# Run this for l0 through l9
+# populate_items(l0, 3) --> last run Nov 15
 
 
 

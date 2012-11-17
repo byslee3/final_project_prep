@@ -98,20 +98,25 @@ In order to move faster -- unless it's very obvious, I am not worrying about cod
 
 Thursday - Nov 15
 
-ON DECK:
-* Crawl through pages and pull full dataset
-* Pull item and fan attributes. Make sure dataset is complete.
-* Post processing, data cleaning, checking
-* Make sure dataset is linked and use this to error check. Run prelim analytics to error check.
+* Pulled data up through level 2 (writing functions along the way)
+* Wrote scripts for populating database with basic item & fan attributes
 
-NEED TO DISCUSS WHAT TO DO NEXT
-* Review code
-    Walk through what I did. Any major mistakes?
-    Best practices
+=============================
+
+Friday - Nov 16
+
 * Ideas for data mining and analyses
 * How to visualize the data mining
-* Do we need to use trees?
-* Brainstorm on front end
+* Brainstorm on front end --> came up with simple/working concept that can then be refined
+* Continued to pull data up to level 3
+
+=============================
+
+Monday - Nov 19
+
+* Finish pulling subset of data
+* Data cleanup and processing
+* Build out rudimentary front end
 
 
 

@@ -441,38 +441,6 @@ def guess_set_fan_pages(num_fans):
     return guess_pages
 
 
-def get_set_fans(set_id):
-
-    ## Assumes that text files storing this data have already been created with create_set_fan_files()
-    ## Returns a list of tuples with fan_id and fan_name
-    ## ----- need fan_id because if it = 0 that means a user with no account
-    ## ----- need fan_name because that is how each fan's page is accessed on Polyvore
-    ## This list will be used to populate the Sets_Fans table, using a function in model.py
-
-    fan_ids = []
-    fan_names = []
-
-    d = get_set_attributes(set_id)
-
-    ## Iterate through the total number of pages, since fans for each set are stored on multiple pages
-    for i in range(d['guess_fan_pages']):
-
-        # Grab the JSON dictionary out of the text file
-        target_filename = create_filename_paged("set-fan",set_id,str(i+1))
-        polyvore = get_json_dict(target_filename)
-
-        # Iterate through all the fans stored on one page
-        for fan in polyvore["result"]["items"]:
-
-            # Check if fan_id = 0. If so, don't add, as that's a user with no account.
-            if not fan["object_id"] == 0:
-
-                fan_ids.append(fan["object_id"])
-                fan_names.append(fan["user_name"])
-
-    result = zip(fan_ids, fan_names)
-    return result
-
 
 def get_set_items(set_id):
 
