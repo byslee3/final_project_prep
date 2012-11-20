@@ -122,11 +122,29 @@ Monday - Nov 19
 
 Tuesday - Nov 20
 
-* Data cleanup and processing
-* GOAL: Get a solid database
-* Continue work on front end
+Additional data pulls:
+1. Reverse populate Item_Sets and include the set url and img url
+2. Use this data to populate the Sets table
+
+Final database
+-- Clean all bad records from each table
+        Remove records from Items that have usd_price < 0
+-- Merge the Item_Set to Set_Item and so forth for all duplicate tables
+-- Remove dups
+-- Make sure that every record is able to be inner joined
 
 
+
+
+List of data cleaning analyses / debugging:
+-- Got errors with some files when populating items into database. Found a consistent 3% error rate which is acceptable for my purposes right now. Found out this problem was due to non-English filenames, so the files never loaded from Polyvore (because I used Try/Except UnicodeError).
+-- Some records in Items have a price (so they were originally marked as product and pulled) however they don't have a USD price so they look like bad records in the database. This is about 15% of all Item records. Spot checked this group (usd_price = -1) against the other group (usd_price > 0) and determined this is a good proxy for whether it's a good record or not. So, cleaning out all records with usd_price < 0.
+
+
+
+
+Check and clean each database:
+* Items (41812 unique records)
 
 
 

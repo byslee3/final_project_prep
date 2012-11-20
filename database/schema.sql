@@ -61,7 +61,8 @@ create table Items_Sets(
     item_id VARCHAR(64),
     set_id VARCHAR(64),
     set_seo_title VARCHAR(64),
-    level REAL
+    level REAL,
+    set_imgurl TEXT
 );
 
 

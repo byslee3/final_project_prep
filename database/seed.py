@@ -263,7 +263,12 @@ def populate_items(item_list, level):
 
         except:
 
+            print "++++++++++++++++++++++++++"
             print "couldn't find file"
+            print item_id
+            print item_seo_title
+            print "++++++++++++++++++++++++++"
+
             no_file_error += 1
 
     print "Successfully entered: " + str(successfully_entered)
@@ -486,13 +491,136 @@ for tup in list_to_pull:
 
 # Run this for l0 through l9
 # populate_items(l9, 3)
+"""
+for key, value in temp_dict.iteritems():
+    populate_items(value, 3)
+"""
 
-# Consistent 3% error rate in IOError and not finding file. --> CHECK THIS TOMORROW
-# Hmm... only got 37642 new records out of 43045 unique records to pull. ~13% loss rate what is going on?!
-# I must have forgotten to enter one of the lists....!!!! Re-run this again tomorrow.
+# Consistent 3% error rate in IOError and not finding file. --> This is for file names that contain Unicode -- when pulling files originally I had try/Except UnicodeError so those never pulled
+# Got 41780 new unique records (41812 total now) out of 43045 that i pulled (which is 3% error rate)
+# For future reference - this also shows why abstraction is better than copy and paste -- first time through i lost 13% of rows because I forgot to run one of the lists manually
 
 
 
+#############################
+# Enter the records into Items_Sets from the ~40K items that we just pulled
+# Enter the imgurl directly, so that we don't actually have to pull all of the sets
+# At some point we will have to pull all of the set data so we can get fans data for these sets --> improve recommendation
+# But we can't pull all of this data now... will take approx 20 x 3 hrs --> several days
+#############################
+
+
+# Enter these in with Level 3
+
+list_items_level3 = unique_records_onecol("Items", "item_id", 3)
+
+# print len(list_items_level3)
+
+def populate_database_item_set_level3():
+
+    success_count = 0
+    error_count = 0
+
+    for item_id in list_items_level3:
+
+        try:
+            model.enter_new_items_sets(db, item_id, 3)
+            print item_id
+            success_count += 1
+        except KeyError:
+            print "+++++++++++++++++++"
+            print "This item was not included in any sets. Don't enter into database."
+            print item_id
+            print "++++++++++++++++++++"
+            error_count += 1
+
+    print "Successfully entered: " + str(success_count)
+    print "Errors: " + str(error_count)
+    print "Error rate: " + str(round(error_count / success_count * 100, 2)) + "%"
+
+# Ran this on Nov 20
+# Started with 41780 item records and entered ~53K records into Items_Sets. Took about 8 minutes.
+# 14% loss rate from items that weren't included in any sets
+
+#############################
+## Debugging ----> See how many sets are usually associated with an item?
+#############################
+
+def sets_per_item():
+
+    db = model.connect_db()
+    query = """SELECT COUNT(set_id) from Items_Sets GROUP BY item_id"""
+    result = db.execute(query)
+
+    result_list = [  row[0] for row in result.fetchall()  ]
+
+    # Create a histogram
+    histogram = [0] * 23
+    print histogram
+
+    for num in result_list:
+        if num <= 22:
+            histogram[num] += 1
+        elif num > 22:
+            histogram[22] += 1
+
+    print histogram
+
+    # Print out the histogram
+    for bucket in range(1, len(histogram)):
+        if bucket <= 21:
+            print "%d items <-----> belong to %d sets" % (histogram[bucket], bucket)
+        elif bucket == 22:
+            print "%d items <-----> belong to 22 or more sets" % histogram[bucket]
+
+sets_per_item()
+
+
+
+
+
+
+#############################
+## Debugging
+#############################
+
+def get_bad_items():
+
+    db = model.connect_db()
+    query = """SELECT item_id, seo_title FROM Items WHERE usd_price < 0"""
+    result = db.execute(query)
+
+    result_list = [ row for row in result.fetchall() ]
+
+    result_urls = []
+
+    for tup in result_list:
+        url = polyvore.get_item_url(tup[0], tup[1])
+        result_urls.append(url)
+
+    return result_urls
+
+# ---> Spot checking shows that most of these are (a) not fashion items (b) from the wrong / discount / counterfeit retailers
+# ---> Okay to clean these items out of the database for our purposes
+
+def get_good_items():
+
+    db = model.connect_db()
+    query = """SELECT item_id, seo_title FROM Items WHERE usd_price > 0"""
+    result = db.execute(query)
+
+    result_list = [ row for row in result.fetchall() ]
+
+    result_urls = []
+
+    for tup in result_list:
+        url = polyvore.get_item_url(tup[0], tup[1])
+        result_urls.append(url)
+
+    return result_urls
+
+# ---> Spot checking the good items shows that most of them are indeed legit
+# ---> Keep these in database
 
 
 

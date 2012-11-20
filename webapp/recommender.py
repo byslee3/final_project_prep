@@ -33,15 +33,9 @@ def inventory():
 @app.route("/combinations", methods=["GET", "POST"])
 def combinations():
 
-    """
-    -----> Having trouble with getting the input from the checkboxes
-    for item in starting_inventory:
-      if request.form['box'] == 1:
-          selected_inventory.append(item)
-    -----> How to implement??
-    """
-
-    selected_inventory = ["temp1", "temp2", "temp3", "temp4", "temp5"]
+    selected_inventory = request.form.keys()
+    # import pdb
+    # pdb.set_trace()
 
     # Get a list of set objects that match
     result = engine.return_matching_sets(selected_inventory)
@@ -52,15 +46,20 @@ def combinations():
     # Pull out the suggested items from the set objects (need to implement)
     suggested_items = result  # This will be an attribute in the future
 
-    return render_template("combinations.html", selected_inventory=selected_inventory, existing_sets=existing_sets, suggested_items=suggested_items)
+    return render_template("combinations.html",
+        selected_inventory=selected_inventory,
+        existing_sets=existing_sets,
+        suggested_items=suggested_items)
 
 
 @app.route("/update_combinations", methods=["GET", "POST"])
 def update_combinations():
 
     """ ?????????????? """
-    existing_sets = "x"  # -----> How to grab this from the previous template?
-    new_item = "x"  # -----> How to grab this from the previous template?
+    """ Need to figure out this part """
+    """ ?????????????? """
+    existing_sets = "x"  # -----> How to grab this from inventory.html?
+    new_item = "x"  # -----> How to grab this from inventory.html?
 
     updated_result = engine.return_updated_sets(existing_sets, new_item)
 
@@ -68,7 +67,11 @@ def update_combinations():
     selected_inventory = ["temp1", "temp2", "temp3", "temp4", "temp5"]
     suggested_items = ["itemA", "itemB", "itemC"]
 
-    return render_template("combinations.html", selected_inventory=selected_inventory, existing_sets=existing_sets, suggested_items=suggested_items)
+    return render_template(
+        "combinations.html", 
+        selected_inventory=selected_inventory, 
+        existing_sets=existing_sets, 
+        suggested_items=suggested_items)
 
 
 

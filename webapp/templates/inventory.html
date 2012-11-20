@@ -36,8 +36,7 @@
 
         {% for item in starting_inventory %}
             <ul><li>
-                {{ item }} <input type="checkbox" value=1>
-                <!-- How do I make the checkbox name dynamic based on the item it's linked to? --> <!-- Or should I use a temporary database and record as we go? -->
+                {{ item }} <input type="checkbox" name="{{ item }}" value=1>
             </li></ul>
         {% endfor %}
 

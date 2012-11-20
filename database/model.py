@@ -219,10 +219,10 @@ def enter_new_items_sets(db, item_id, level):
 
     # Loop through all the values_to_add and insert them into database
     c = db.cursor()
-    query = """INSERT INTO Items_Sets VALUES(NULL, ?, ?, ?, ?)"""
+    query = """INSERT INTO Items_Sets VALUES(NULL, ?, ?, ?, ?, ?)"""
 
     for v in values_to_add:
-        c.execute(query, (item_id, v[0], v[1], level))
+        c.execute(query, (item_id, v[0], v[1], level, v[2]))
 
     db.commit()
 

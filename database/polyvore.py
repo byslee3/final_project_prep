@@ -336,7 +336,7 @@ def get_item_attributes(item_id):
     d['category_id'] = polyvore["thing"]["category_id"]
     d['brand_id'] = polyvore["thing"]["brand_id"]
     d['brand_name'] = polyvore["thing"]["brand"]
-    d['usd_price'] = polyvore["thing"].get("usd_price", -1)   # Getting a key error when we try to pull usd_price?
+    d['usd_price'] = polyvore["thing"].get("usd_price", -1)   # Getting a key error when we try to pull usd_price --> It's because some items have prices(thus are a product) but don't have a USD price. Argh!
 
     # This may or may not exist for all objects (?)
     if polyvore["thing"].get("shop_link"):
@@ -526,7 +526,7 @@ def get_user_items(user_id):
         target_filename = create_filename_paged("user-item", user_id, str(i))
         polyvore = get_json_dict(target_filename)
 
-        # Iterate through all the sets stored on one page
+        # Iterate through all the items stored on one page
         for item in polyvore["result"]["items"]:
 
             # Check if it's a product (using existence of price tag as a proxy)
@@ -550,9 +550,11 @@ def get_item_sets(item_id):
     ## For a given item, returns all the sets that it is associated with
     ## Returns a list of tuples with set_id and set_seo_title
     ## This list will be used to "reverse" populate the Sets_Items table (stored as a separate Items_Sets table for now)
+    ## ---> New edit Nov 20: Return clickurl and imgurl as well in this table, instead of pulling all the set ids and then pulling from there (b/c there will be approx 1M and takes too long to pull)
 
     set_ids = []
     set_seo_titles = []
+    imgurls = []
 
     # Open the appropriate JSON file and read from it
     filename = create_filename("item", item_id)
@@ -567,11 +569,13 @@ def get_item_sets(item_id):
 
             set_id = collection["id"]
             set_seo_title = collection["seo_title"]
+            imgurl = collection["imgurl"]
 
             set_ids.append(set_id)
             set_seo_titles.append(set_seo_title)
+            imgurls.append(imgurl)
 
-    result = zip(set_ids, set_seo_titles)
+    result = zip(set_ids, set_seo_titles, imgurls)
     return result
 
 
