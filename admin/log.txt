@@ -114,9 +114,17 @@ Friday - Nov 16
 
 Monday - Nov 19
 
-* Finish pulling subset of data
+* Built skeleton for web app
+* Finished pulling item data to level 3. ~37K records. Need to clean it tomorrow.
+* Learning Javascript/Jquery...
+
+=============================
+
+Tuesday - Nov 20
+
 * Data cleanup and processing
-* Build out rudimentary front end
+* GOAL: Get a solid database
+* Continue work on front end
 
 
 

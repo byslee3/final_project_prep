@@ -250,12 +250,25 @@ def populate_items(item_list, level):
 
     db = model.connect_db()
 
+    successfully_entered = 0.0
+    no_file_error = 0.0
+
     for item_id, item_seo_title in item_list:
 
-        print item_id
+        try:
 
-        model.enter_new_item(db, item_id, level)
+            model.enter_new_item(db, item_id, level)
+            print item_id
+            successfully_entered += 1
 
+        except:
+
+            print "couldn't find file"
+            no_file_error += 1
+
+    print "Successfully entered: " + str(successfully_entered)
+    print "Errors: " + str(no_file_error)
+    print "Error rate: " + str(round(no_file_error / successfully_entered * 100, 2)) + "%"
 
 # populate_items(list_of_items, 2) --> last run Nov 15
 
@@ -464,9 +477,7 @@ for tup in list_to_pull:
 #### Run each list through this once
 #### Last run on Nov 16
 
-# pull_items(l0) --> already ran l0
-
-# still need to run l1 through l9 which will take approx 3 hours
+# pull_items(l9) ---> ran this on l1 through l9!!!
 
 
 #############################
@@ -474,7 +485,11 @@ for tup in list_to_pull:
 #############################
 
 # Run this for l0 through l9
-# populate_items(l0, 3) --> last run Nov 15
+# populate_items(l9, 3)
+
+# Consistent 3% error rate in IOError and not finding file. --> CHECK THIS TOMORROW
+# Hmm... only got 37642 new records out of 43045 unique records to pull. ~13% loss rate what is going on?!
+# I must have forgotten to enter one of the lists....!!!! Re-run this again tomorrow.
 
 
 
