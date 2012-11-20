@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block body %}
+<a href="{{  url_for("start")  }}">back</a>
+
+<br>
+<br>
+This is the selected inventory. <br>
+
+    {% for item in selected_inventory %}
+        <ul><li>
+            {{ item }}
+        </ul></li>
+    {% endfor %}
+<br>
+<br>
+
+<br>
+<br>
+These are the resulting sets that already exist. (and/or that can be formed if you add this new item) <br>
+You can currently access {{ existing_sets|length }} combinations.
+
+    {% for set in existing_sets %}
+        <ul><li>
+            {{set}}
+        </ul></li>
+    {% endfor %}
+
+
+<br>
+<br>
+These are the potential new items.
+<br>
+    {% for item in suggested_items %}
+        <ul><li>
+            {{item}} ----- <a href="{{  url_for("update_combinations")  }}">what if i added this?</a>
+        </ul></li>
+    {% endfor %}
+
+{% endblock %}

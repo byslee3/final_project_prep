@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<!-- layout template -->
+
+<html>
+
+    <head>
+        <title>Proteus: Fashion Amoeba</title>
+        <!-- <link rel = "stylesheet" href = "/static/css/bootstrap.css" type = "text/css"> -->
+
+        {% block head %}
+        {% endblock %}
+        
+    </head>
+
+    <body>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block body %}
+        {% endblock %}
+
+    </body>
+
+</html>

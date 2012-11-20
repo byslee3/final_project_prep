@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+
+
+
+
+{% block head %}
+
+    <script type = 'text/javascript'>
+    </script>
+
+
+{% endblock %}
+
+
+
+
+
+{% block body %}
+
+    <a href = "{{ url_for("start") }}">back</a>
+
+    <br>
+    <br>
+
+    Hi {{name}}, let's get started. <br>
+    There will be a bunch of boxes for 100 suggested items.
+
+    <br>
+    <br>
+
+
+    <form action="{{  url_for("combinations")  }}" method="POST">
+
+        <input type="submit" value="submit">
+
+        {% for item in starting_inventory %}
+            <ul><li>
+                {{ item }} <input type="checkbox" value=1>
+                <!-- How do I make the checkbox name dynamic based on the item it's linked to? --> <!-- Or should I use a temporary database and record as we go? -->
+            </li></ul>
+        {% endfor %}
+
+    </form>
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
