@@ -573,7 +573,7 @@ def sets_per_item():
         elif bucket == 22:
             print "%d items <-----> belong to 22 or more sets" % histogram[bucket]
 
-sets_per_item()
+# sets_per_item()
 
 
 
