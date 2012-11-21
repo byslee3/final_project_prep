@@ -74,6 +74,8 @@ def populate_sets_fans(batch):
 
         model.enter_new_sets_fans(db, set_id)
 
+    db.close()
+
 # populate_sets_fans(batch_1)
 
 
@@ -89,6 +91,8 @@ def populate_sets_items(batch):
     for set_id, seo_title in batch:
 
         model.enter_new_sets_items(db, set_id)
+
+    db.close()
 
 # populate_sets_items(batch_1)
 
@@ -126,6 +130,8 @@ def print_overlap():
         percentage = int(round(sets_rated_by_each_fan[x]/total_fans*100))
         print str(int(sets_rated_by_each_fan[x])) + " out of " + str(int(total_fans)) + " -- (" + str(percentage) + "%) -- rated " + str(x) + " out of 5 sets"
 
+    db.close()
+
 # print_overlap()
 
 
@@ -152,6 +158,7 @@ def list_of_unique_fans(batch):
     
     # Get a list of records and return it
     list_of_fans = [ row[0] for row in result.fetchall() ]
+    db.close()
     return list_of_fans
 
 
@@ -172,6 +179,7 @@ def list_of_unique_items(batch):
 
     # Get a list of records and return it
     list_of_items = [ row for row in result.fetchall() ]
+    db.close()
     return list_of_items
 
 
@@ -181,9 +189,10 @@ def list_of_unique_items(batch):
 # Last performed Thu Nov 15
 #############################
 
+"""
 list_of_fan_names = list_of_unique_fans(batch_1)    # 1171 records
 list_of_items = list_of_unique_items(batch_1)       # 32 records
-
+"""
 
 def pull_users(list_of_fan_names):
 
@@ -241,6 +250,8 @@ def whatever():
         print list_of_fan_names[i]
         model.enter_new_user(db, list_of_fan_names[i], 2.4)
 
+    db.close()
+
 #############################
 # Enter the Items into the database
 # Assign them as Level 2
@@ -275,6 +286,8 @@ def populate_items(item_list, level):
     print "Errors: " + str(no_file_error)
     print "Error rate: " + str(round(no_file_error / successfully_entered * 100, 2)) + "%"
 
+    db.close()
+
 # populate_items(list_of_items, 2) --> last run Nov 15
 
 
@@ -294,7 +307,7 @@ def unique_item_id(batch):
 # Last performed Thu Nov 15
 #############################
 
-list_1 = unique_item_id(batch_1)
+# list_1 = unique_item_id(batch_1)
 
 def populate_items_sets(list_of_ids):
 
@@ -303,6 +316,8 @@ def populate_items_sets(list_of_ids):
     for item_id in list_of_ids:
 
         model.enter_new_items_sets(db, item_id)
+
+    db.close()
 
 # populate_items_sets(list_1)
 
@@ -323,6 +338,7 @@ def list_of_unique_sets(level):
 
     # Get a list of records and return it
     list_of_sets = [ row for row in result.fetchall() ]
+    db.close()
     return list_of_sets
 
 
@@ -332,7 +348,7 @@ def list_of_unique_sets(level):
 # Last performed Thu Nov 15
 #############################
 
-level_3 = list_of_unique_sets(2)
+# level_3 = list_of_unique_sets(2)
 
 # pull_sets(level_3) ---> last run Nov 15
 
@@ -359,28 +375,33 @@ def whatever2():
         except IOError:
             print "No file exists (likely Unicode Error)"
 
+    db.close()
+
 
 #############################
 # Grab all the Fan --> Item relationships from Level 2
 #############################
 
+def grab_these_relationships():
 
-db = model.connect_db()
+    db = model.connect_db()
 
-query1 = """SELECT DISTINCT user_id FROM Users WHERE level = 2.1"""
-query2 = """SELECT DISTINCT user_id FROM Users WHERE level = 2.2"""
-query3 = """SELECT DISTINCT user_id FROM Users WHERE level = 2.3"""
-query4 = """SELECT DISTINCT user_id FROM Users WHERE level = 2.4"""
+    query1 = """SELECT DISTINCT user_id FROM Users WHERE level = 2.1"""
+    query2 = """SELECT DISTINCT user_id FROM Users WHERE level = 2.2"""
+    query3 = """SELECT DISTINCT user_id FROM Users WHERE level = 2.3"""
+    query4 = """SELECT DISTINCT user_id FROM Users WHERE level = 2.4"""
 
-result1 = db.execute(query1)
-result2 = db.execute(query2)
-result3 = db.execute(query3)
-result4 = db.execute(query4)
+    result1 = db.execute(query1)
+    result2 = db.execute(query2)
+    result3 = db.execute(query3)
+    result4 = db.execute(query4)
 
-list_fans_1 = [  row[0] for row in result1.fetchall()  ]
-list_fans_2 = [  row[0] for row in result2.fetchall()  ]
-list_fans_3 = [  row[0] for row in result3.fetchall()  ]
-list_fans_4 = [  row[0] for row in result4.fetchall()  ]
+    list_fans_1 = [  row[0] for row in result1.fetchall()  ]
+    list_fans_2 = [  row[0] for row in result2.fetchall()  ]
+    list_fans_3 = [  row[0] for row in result3.fetchall()  ]
+    list_fans_4 = [  row[0] for row in result4.fetchall()  ]
+
+    db.close()
 
 # print list_fans_1
 # print list_fans_2
@@ -431,6 +452,7 @@ def unique_records_onecol(table, col, level):
 
     # Get a list of records and return it
     list_of_items = [ row[0] for row in result.fetchall() ]
+    db.close()
     return list_of_items
 
 
@@ -444,6 +466,7 @@ def unique_records_twocol(table, col1, col2, level):
 
     # Get a list of records and return it
     list_of_items = [ row for row in result.fetchall() ]
+    db.close()
     return list_of_items
 
 
@@ -452,31 +475,32 @@ def unique_records_twocol(table, col1, col2, level):
 # Pull down the item files in batches
 #############################
 
-# 43045 unique records
-list_to_pull = unique_records_twocol("Users_Items", "item_id", "item_seo_title", 2)
+def pull_batch_of_item_files():
+    # 43045 unique records
+    list_to_pull = unique_records_twocol("Users_Items", "item_id", "item_seo_title", 2)
 
-# split the list to pull into batches of approx 5K
+    # split the list to pull into batches of approx 5K
 
-l0 = []
-l1 = []
-l2 = []
-l3 = []
-l4 = []
-l5 = []
-l6 = []
-l7 = []
-l8 = []
-l9 = []
+    l0 = []
+    l1 = []
+    l2 = []
+    l3 = []
+    l4 = []
+    l5 = []
+    l6 = []
+    l7 = []
+    l8 = []
+    l9 = []
 
-temp_dict = {'0': l0, '1': l1, '2':l2, '3': l3, '4': l4, '5':l5, '6': l6, '7':l7, '8':l8, '9':l9}
+    temp_dict = {'0': l0, '1': l1, '2':l2, '3': l3, '4': l4, '5':l5, '6': l6, '7':l7, '8':l8, '9':l9}
 
-for tup in list_to_pull:
+    for tup in list_to_pull:
 
-    lastnum = tup[0][-1]
+        lastnum = tup[0][-1]
 
-    target_list = temp_dict[lastnum]
+        target_list = temp_dict[lastnum]
 
-    target_list.append(tup)
+        target_list.append(tup)
 
 
 #### Run each list through this once
@@ -512,7 +536,7 @@ for key, value in temp_dict.iteritems():
 
 # Enter these in with Level 3
 
-list_items_level3 = unique_records_onecol("Items", "item_id", 3)
+# list_items_level3 = unique_records_onecol("Items", "item_id", 3)
 
 # print len(list_items_level3)
 
@@ -539,7 +563,7 @@ def populate_database_item_set_level3():
     print "Error rate: " + str(round(error_count / success_count * 100, 2)) + "%"
 
 # Ran this on Nov 20
-# Started with 41780 item records and entered ~53K records into Items_Sets. Took about 8 minutes.
+# Started with 41780 item records and entered ~500K records into Items_Sets. Took about 8 minutes.
 # 14% loss rate from items that weren't included in any sets
 
 #############################
@@ -573,10 +597,64 @@ def sets_per_item():
         elif bucket == 22:
             print "%d items <-----> belong to 22 or more sets" % histogram[bucket]
 
+    # Check against total # of Items_Sets records by doing SumProduct
+    sum_p = 0
+    for bucket in range(1, len(histogram)):
+        sum_p += bucket * histogram[bucket]
+
+    print sum_p
+
+    db.close()
+
+# Possibly 21 sets is the maximum allowed??? Or even if there were more, they are not shown.
 # sets_per_item()
 
 
+#############################
+## Populate the Sets table from the Items_Sets table that we just created
+## Assign it to Level 4
+#############################
 
+## Usually we should use model.enter_new_set
+## But we didn't pull the actual Set files because there would be 500K+ of them
+## So we're just doing a shortcut version by hand
+
+
+# Get list to enter into sets database
+def get_list_1():
+
+    list_of_tups = []
+
+    db = model.connect_db()
+    query = """SELECT DISTINCT set_id, set_seo_title, set_imgurl FROM Items_Sets"""
+    result = db.execute(query)
+
+    result_list = [  row for row in result.fetchall()  ]
+    
+    db.close()
+
+    return result_list
+
+# Enter this list into the sets database
+# We are only entering set_id, set_seo_title, set_imgurl: there will be a lot of missing fields
+def enter_list_1():
+
+    list_to_enter = get_list_1()
+
+    db = model.connect_db()
+    c = db.cursor()
+    query = """INSERT INTO Sets VALUES(NULL, ?, ?, NULL, NULL, NULL, NULL, NULL, NULL, ?, NULL, NULL, NULL, NULL, NULL, 4)"""
+
+    counter = 0
+
+    for tup in list_to_enter:
+        # print tup[0]
+        c.execute(query, (tup[0], tup[1], tup[2]))
+        print counter
+        counter += 1
+        
+    db.commit()
+    db.close()
 
 
 
@@ -598,6 +676,7 @@ def get_bad_items():
         url = polyvore.get_item_url(tup[0], tup[1])
         result_urls.append(url)
 
+    db.close()
     return result_urls
 
 # ---> Spot checking shows that most of these are (a) not fashion items (b) from the wrong / discount / counterfeit retailers
@@ -617,6 +696,7 @@ def get_good_items():
         url = polyvore.get_item_url(tup[0], tup[1])
         result_urls.append(url)
 
+    db.close()
     return result_urls
 
 # ---> Spot checking the good items shows that most of them are indeed legit

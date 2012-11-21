@@ -122,18 +122,9 @@ Monday - Nov 19
 
 Tuesday - Nov 20
 
-Additional data pulls:
-1. Reverse populate Item_Sets and include the set url and img url
-2. Use this data to populate the Sets table
-
-Final database
--- Clean all bad records from each table
-        Remove records from Items that have usd_price < 0
--- Merge the Item_Set to Set_Item and so forth for all duplicate tables
--- Remove dups
--- Make sure that every record is able to be inner joined
-
-
+Continued to do data manipulations:
+* Reverse populated Items_Sets and added a field for imgurl so we don't have to pull Set files
+* Populated the Sets file
 
 
 List of data cleaning analyses / debugging:
@@ -141,10 +132,55 @@ List of data cleaning analyses / debugging:
 -- Some records in Items have a price (so they were originally marked as product and pulled) however they don't have a USD price so they look like bad records in the database. This is about 15% of all Item records. Spot checked this group (usd_price = -1) against the other group (usd_price > 0) and determined this is a good proxy for whether it's a good record or not. So, cleaning out all records with usd_price < 0.
 
 
-
-
 Check and clean each database:
-* Items (41812 unique records)
+* Sets (405,030 records | 404,099 unique sets)
+* Items (41,812 records | 41,797 unique items)
+* Users (1,171 records | 1,171 unique users)
+-------------------------------------------------------------------------
+* Sets_Fans (2,154 records | 1,171 unique users | 5 unique sets)
+* Fans_Sets (we ended up not populating this)
+-------------------------------------------------------------------------
+* Items_Sets (538,845 records | 36,615 unique items | 404,099 unique sets)
+* Sets_Items (32 records | 32 unique items | 5 unique sets)
+-------------------------------------------------------------------------
+* Users_Items (55,476 records | 1,120 unique users | 43,045 unique items)
+* Items_Users (we ended up not populating this)
+
+
+Could go back and pull these relationships (but we won't do it now due to time constraints):
+* Level 3 sets --> pull associated fans
+* Level 3 sets --> pull associated items
+* All of the Items --> Users associations
+* We stopped at Level 4 sets but could continue
+Basically anything dotted in green in the notebook.
+
+
+Data in the overlapping tables is too little, doesn't make sense to merge it right now.
+Here are the tables and relationships that we have significant data for right now:
+--------------------------------------------------------------------------------------------
+* SETS (405,030 records | 404,099 unique sets)
+* ITEMS (41,812 records | 41,797 unique items)
+* USERS (1,171 records | 1,171 unique users)
+--------------------------------------------------------------------------------------------
+* ITEMS <--> SETS   Items_Sets (538,845 records | 36,615 unique items | 404,099 unique sets)
+* ITEMS <--> USERS  Users_Items (55,476 records | 1,120 unique users | 43,045 unique items)
+
+
+SAVE BACKUP OF DATABASE AND CONTINUE
+-- Clean out any bad data from each of the tables
+        Remove any records from Items that have usd_price < 0 
+-- Remove duplicates
+-- Run inner joins and left/right joins to check that data can be linked correctly
+-- Save this as the final database
+
+
+
+
+
+
+
+
+
 
 
 
@@ -160,3 +196,4 @@ Reconstruct the Polyvore database
 --- Write script to traverse through linked pages, pull out JSON strings, and store them in text files. Need to traverse through linked pages (not just randomly) so we can force the data to have connections.
 --- Write script to parse JSON text files, pull out the data we need, and stick it in a database
 --- Create database schema and populate the database
+--- Clean data and debug processes
