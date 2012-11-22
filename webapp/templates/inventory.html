@@ -36,7 +36,8 @@
 
         {% for item in starting_inventory %}
             <ul><li>
-                {{ item }} <input type="checkbox" name="{{ item }}" value=1>
+                {{ item['item_id'] }} <input type="checkbox" name="{{ item['item_id'] }}" value=1>
+                {{ item['title'] }}
             </li></ul>
         {% endfor %}
 

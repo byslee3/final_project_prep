@@ -1,10 +1,30 @@
-from flask import Flask, render_template, redirect, request, session, flash
+from flask import Flask, render_template, redirect, request, session, flash, g
 import engine
+import sqlite3
 
 
-# Initialize app. Boilerplate to make it run
+#############################
+###### Setup / Generic ######
+#############################
+
+DATABASE = "polyvore.db"
+
+# Initialize app
 app = Flask(__name__)
 app.config.from_object(__name__)
+
+# Database connection
+def connect_db():
+    return sqlite3.connect(app.config['DATABASE'])
+
+@app.before_request
+def before_request():
+    g.db = connect_db()
+
+@app.teardown_request
+def teardown_request(exception):
+    g.db.close()
+
 
 
 #############################
@@ -24,7 +44,7 @@ def start():
 @app.route("/inventory", methods=["GET", "POST"])
 def inventory():
 
-    starting_inventory = engine.get_starting_items()
+    starting_inventory = engine.get_starting_items(g.db)
     name = request.form['user_name']
 
     return render_template("inventory.html", starting_inventory=starting_inventory, name=name)
