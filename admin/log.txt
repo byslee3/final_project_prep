@@ -166,7 +166,8 @@ Here are the tables and relationships that we have significant data for right no
 * ITEMS <--> USERS  Users_Items (55,476 records | 1,120 unique users | 43,045 unique items)
 
 
-SAVE BACKUP OF DATABASE AND CONTINUE
+Additional data cleaning from this point:
+
 -- Clean out any bad data from each of the tables
         Remove any records from Items that have usd_price < 0 
 -- Remove duplicates
