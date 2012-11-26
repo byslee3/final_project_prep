@@ -1,44 +1,77 @@
 import sqlite3
 import random
 
-# This will get information out of the database and feed it into recommender.py
-# For now (database is loading) send over dummy data and fill in functions later
 
+def get_starting_items(db):
+    test = ["aaa", "bbb", "ccc", "ddd", "eee"]
+    return test
 
-#####
-##### -----> NEED TO WRITE THIS
-# Need to write class definition for a set object
-# Attribute 1: list of matching objects to inventory
-# Attribute 2: list of all objects in set
-# Attribute 3: (derived) percentage of matching objects
-# Attribute 4: (derived) still missing objects --> can use this to surface suggested items
-#####
-#####
-
-
-# Global variables to store the num of records in each table (faster than having to do select count each time)
-# Keep this updated as the database changes
-NUM_ITEMS = 41812
-
-## This is just for testing purposes. (will be passed from recommender.py later)
-db = sqlite3.connect("polyvore.db")
-selected_inventory = [
-"57049384",
-"59412350",
-"64965861",
-"66943923",
-"68480485",
-"68078611",
-"64495413",
-"65106361",
-"24433814",
-"67836525"]
+def get_next_items(db, this_round_selection):
+    test = ["AAA", "BBB", "CCC", "DDD", "EEE"]
+    return test
 
 
 
-####################################
-########### Functions ##############
-####################################
+
+
+def main():
+
+    #db = sqlite3.connect("polyvore.db")
+    db = "test"
+
+    selected_inventory = []
+
+    display_list = get_starting_items(db)  # First time through: Get 5 random seed items
+
+    while len(selected_inventory) < 100:   # Ultimately may turn out slightly longer than 100 if they select multiple items on last time through loop
+
+        # Print out the options
+        command_num = 1
+
+        for item in display_list:
+            print str(command_num) + " ---> " + item
+
+        # Get input from user
+        # Need to loop through until they've entered everything
+        answer = -1
+        this_round_selection = []
+
+        while answer != 0:
+            
+            answer = raw_input("Add item or '0' to submit marked items: ")
+
+            if answer != 0:
+                selected_item = display_list[answer - 1]
+                selected_inventory.append(selected_item)
+                this_round_selection.append(selected_item)
+
+        # Once user has submitted their selections, get the next round of items to show them
+        display_list = get_next_items(db, this_round_selection)
+
+    print selected_inventory
+
+
+
+
+
+
+##############################################################################
+##############################################################################
+##############################################################################
+##############################################################################
+##############################################################################
+##############################################################################
+##############################################################################
+##############################################################################
+##############################################################################
+##############################################################################
+##############################################################################
+##############################################################################
+##############################################################################
+##############################################################################
+##############################################################################
+
+
 
 
 def get_starting_items(db):
@@ -121,7 +154,7 @@ def get_subset_based_on_items(db, selected_inventory):
 
 
 # For testing --> delete later
-subset = get_subset_based_on_items(db, selected_inventory)
+# subset = get_subset_based_on_items(db, selected_inventory)
 
 
 # Step 2 of the process
@@ -203,7 +236,6 @@ def print_target_sets(db):
 
 # Delete anything that isn't in the target sets (this is a test database for now)
 # Full database is stored in another file
-# ----> Don't do this, it is taking too long.
 def delete_non_targets():
 
     global db
@@ -227,34 +259,6 @@ def delete_non_targets():
     db.close()
 
 
-# USE THIS INSTEAD
-def copy_target_sets():
-
-    global db
-    reference_list = print_target_sets(db)
-
-    testcount = 0
-
-    for tup in reference_list:
-
-        if tup[1] >= 4:
-
-            query_a = """SELECT * FROM Items_Sets WHERE set_id = ?"""
-            cursor = db.execute(query_a, (tup[0],))
-
-            for row in cursor.fetchall():
-                values_to_enter = (row[1], row[2], row[3], row[4], row[5])
-                query_b = """INSERT INTO Test VALUES(NULL, ?, ?, ?, ?, ?)"""
-                db.execute(query_b, values_to_enter)
-                db.commit()  # ALWAYS REMEMBER TO COMMIT
-
-                print "record successfully entered ---> " + str(testcount)
-
-                testcount += 1
-
-        # Otherwise do nothing. This is vast majority, so will be faster.
-
-    db.close()
 
 
 

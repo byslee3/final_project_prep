@@ -40,10 +40,8 @@ Issues addressed/encountered:
 * Should I populate database as I go, or save all JSON strings and parse through it later? --> Save all strings in case I need to go back later.
 * Found out where Polyvore has this data (yay!): Denoting which set items are products versus graphics, some category tags and category ids for each item (need to figure out which is most predictive/relevant)
 
-
 * Should I pull the relationship between users who saved, and items?
   Or just keep item <---> set relationship and focus on that?
-
 
 Issues still to resolve:
 * What's the right order for crawling through the pages?
@@ -126,11 +124,9 @@ Continued to do data manipulations:
 * Reverse populated Items_Sets and added a field for imgurl so we don't have to pull Set files
 * Populated the Sets file
 
-
 List of data cleaning analyses / debugging:
 -- Got errors with some files when populating items into database. Found a consistent 3% error rate which is acceptable for my purposes right now. Found out this problem was due to non-English filenames, so the files never loaded from Polyvore (because I used Try/Except UnicodeError).
 -- Some records in Items have a price (so they were originally marked as product and pulled) however they don't have a USD price so they look like bad records in the database. This is about 15% of all Item records. Spot checked this group (usd_price = -1) against the other group (usd_price > 0) and determined this is a good proxy for whether it's a good record or not. So, cleaning out all records with usd_price < 0.
-
 
 Check and clean each database:
 * Sets (405,030 records | 404,099 unique sets)
@@ -146,14 +142,12 @@ Check and clean each database:
 * Users_Items (55,476 records | 1,120 unique users | 43,045 unique items)
 * Items_Users (we ended up not populating this)
 
-
 Could go back and pull these relationships (but we won't do it now due to time constraints):
 * Level 3 sets --> pull associated fans
 * Level 3 sets --> pull associated items
 * All of the Items --> Users associations
 * We stopped at Level 4 sets but could continue
 Basically anything dotted in green in the notebook.
-
 
 Data in the overlapping tables is too little, doesn't make sense to merge it right now.
 Here are the tables and relationships that we have significant data for right now:
@@ -165,19 +159,51 @@ Here are the tables and relationships that we have significant data for right no
 * ITEMS <--> SETS   Items_Sets (538,845 records | 36,615 unique items | 404,099 unique sets)
 * ITEMS <--> USERS  Users_Items (55,476 records | 1,120 unique users | 43,045 unique items)
 
-
 Additional data cleaning from this point:
-
 -- Clean out any bad data from each of the tables
         Remove any records from Items that have usd_price < 0 
 -- Remove duplicates
 -- Run inner joins and left/right joins to check that data can be linked correctly
 -- Save this as the final database
 
+=============================
+
+Wednesday - Nov 21
+
+* Started building out the engine for the web interface.
+* Decided to leave database as is, since more errors are going to come up in the course of writing the rest of the program. Use this as test data now to get the program running, then clean the database.
+* Turned out to be a good idea... because it turns out this data is kind of useless for our purposes. Sets and items do not overlap enough for our original matching algorithm to work.
+* Need more thinking on how we can salvage this.
+
+=============================
+
+Thanksgiving - Thursday to Sunday - Nov 22 to 25
+
+Thought about how this problem can be solved.
+-- Reframed the original problem: Assume there are no novel combinations, the only valid combinations are those that are already laid out in Polyvore sets.
+-- For the next step: Assuming there are novel combinations -- how can we find them? Brute force: come up with every possible combination depending on what the user selected. Then, match those against a set of criteria that we've defined as = a valid set. If they don't meet those criteria, then throw them out.
+    ----> How will we come up with this criteria? Based on characteristics of Polyvore sets. But, we need some human guidance as to which criteria to test for.
+More notes in the notebook.
+
+"Keep things simple, then expand." --Dad
+
+=============================
+
+Monday - Nov 26
+
+* Pull just the sets with 4+ items, to give us a working data set for testing our new algorithm
+* Write out the matching algorithm just in Python, no web interface. Test this in Python first
+    ---> Method for selecting the starting inventory
+    ---> Method for matching sets
+
+Learning: Always just do the minimum necessary, instead of investing a lot of time trying to make it perfect at each step. Always go back and improve it later, but build out a test case first, so you don't waste your time trying to perfect something that ultimately doesn't work. Always do a test case first!!!!!
 
 
 
-
+=============================
+If it works:
+---> Build out web interface
+---> Pull more data
 
 
 
