@@ -203,7 +203,8 @@ Learning: Always just do the minimum necessary, instead of investing a lot of ti
 =============================
 If it works:
 ---> Build out web interface
----> Pull more data
+---> Pull more data *** When re-pulling this data start from 100 items that I think are staples
+     That way we can be sure of having a starter group of items that works
 
 
 
