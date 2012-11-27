@@ -12,6 +12,8 @@ selected_inventory_test = [
 '67309090']
 
 
+
+
 ##############################################################################
 ########################### Class Definition #################################
 ##############################################################################
@@ -22,28 +24,17 @@ class Set(object):
         self.set_id = set_id
         self.items_matching = []
         self.items_missing = []
-        self.items_all = []
-        self.match_percentage = None
+        self.total_items = None
+        self.percent_match = None
 
-    def update_items_matching(item_id):
-        self.items_matching.append(item_id)
+    def calculate_total_items(self):
+        self.total_items = len(self.items_matching) + len(self.items_missing) + 0.0
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    def calculate_percent_match(self):
+        if not self.total_items:
+            pass
+        else:
+            self.percent_match = round(len(self.items_matching) / self.total_items * 100, 1)
 
 
 ##############################################################################
@@ -51,10 +42,13 @@ class Set(object):
 ##############################################################################
 
 
-
 def connect_db():
     db = sqlite3.connect("polyvore.db")
     return db
+
+
+# Testing purposes
+db = connect_db()
 
 
 # This works
@@ -141,19 +135,42 @@ def main():
 
 
 ##############################################################################
+##############################################################################
 ########################### Matching to Sets #################################
 ##############################################################################
+##############################################################################
 
-# Step 1 of the process
+# Step 1a of the process
 # Given the Items_Sets list, only pull out the records where item = in selected inventory
 # ---> Need to index the Items_Sets table on item_id
-def get_subset_based_on_items(db, selected_inventory):
+def get_subset_matching_items(db, selected_inventory):
+
+    """
+    selected_inventory = a list of item_ids that the user selected
+    result = returns a list of set_ids that contain those items
+    will be called by another function
+    """
 
     query_template = """SELECT * FROM Test WHERE item_id IN (%s)"""
     q_marks_string = ", ".join(["?"] * len(selected_inventory))
     query = query_template % q_marks_string
 
     cursor = db.execute(query, tuple(selected_inventory))
+    result = [  row[2] for row in cursor.fetchall()  ]
+    return result
+
+
+# Step 1b of the process
+# Now that we have all the sets + matching items, need to get all the sets + all items
+def get_subset_all_items(db, selected_inventory):
+
+    selected_sets = get_subset_matching_items(db, selected_inventory)
+
+    query_template = """SELECT * FROM Test WHERE set_id IN (%s)"""
+    q_marks_string = ", ".join(["?"] * len(selected_sets))
+    query = query_template % q_marks_string
+    cursor = db.execute(query, selected_sets)
+
     result = [  row for row in cursor.fetchall()  ]
     return result
 
@@ -174,18 +191,64 @@ def aggregate_into_sets(db, selected_inventory, subset):
         item_id = record[1]
         set_id = record[2]
 
-        if d.get(set_id) == None:   # Means the set has not been recorded yet
-            d[set_id] = [item_id]   # Create a new list and store this item as the first entry
-        else:                           # Else
-            d[set_id].append(item_id)   # Add this item_id to the existing entry
+        # If the set has not been recorded yet, create a new set object and store in dictionary
+        if d.get(set_id) == None:
 
-    for key, value in d.iteritems():
-        print "+++++++++++++++++"
-        print key
-        print value
+            d[set_id] = Set(set_id)
 
-    """Returns this dictionary: but it only includes matching items"""
-    """Need to go back through and get the rest of the items"""
+            # Determine whether the item is a matching or missing item, and update the Set object accordingly
+            if item_id in selected_inventory:
+                d[set_id].items_matching.append(item_id)
+            else:
+                d[set_id].items_missing.append(item_id)
+
+        else:
+            # Determine whether the item is a matching or missing item
+            if item_id in selected_inventory:
+                d[set_id].items_matching.append(item_id)
+            else:
+                d[set_id].items_missing.append(item_id)
+
+    return d
+
+
+# Step 3a of the process
+# Calculate the percentage match of the sets
+def calculate_percent_match(db, set_dictionary):
+
+    for key, set_object in set_dictionary.iteritems():
+
+        set_object.calculate_total_items()
+        set_object.calculate_percent_match()
+
+    return set_dictionary
+
+
+# Step 3b of the process
+# Return all of the sets that have a percent match above a certain cutoff
+def return_sets_above_cutoff(db, set_dictionary, cutoff):
+    pass
+
+
+def ultimate():
+
+    global selected_inventory_test
+
+    db = connect_db()
+
+    subset = get_subset_all_items(db, selected_inventory_test)
+
+    set_dict = aggregate_into_sets(db, selected_inventory_test, subset)
+
+    final = calculate_percent_match(db, set_dict)
+
+    for key, obj in final.iteritems():
+        print "****************************"
+        print obj.items_matching
+        print obj.items_missing
+        print obj.total_items
+        print obj.percent_match
+
 
 
 
@@ -212,21 +275,9 @@ def return_matching_sets(db, selected_inventory):
 
 
 
-##############################################################################
-##############################################################################
-##############################################################################
-##############################################################################
-##############################################################################
-##############################################################################
-##############################################################################
-##############################################################################
-##############################################################################
-##############################################################################
-##############################################################################
-##############################################################################
-##############################################################################
-##############################################################################
-##############################################################################
+
+
+
 
 
 
