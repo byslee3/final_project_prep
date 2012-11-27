@@ -2,6 +2,56 @@ import sqlite3
 import random
 
 
+# For testing purposes
+selected_inventory_test = [
+'57295956', '67870971', '67861593', '14428033',
+'24719080', '29485094', '43783147', '58034310',
+'9275563', '69635837', '64527026', '62855670',
+'9497001', '7556411', '67870785', '66786539',
+'66866385', '66032594', '69920782', '65283476',
+'67309090']
+
+
+##############################################################################
+########################### Class Definition #################################
+##############################################################################
+
+class Set(object):
+
+    def __init__(self, set_id):
+        self.set_id = set_id
+        self.items_matching = []
+        self.items_missing = []
+        self.items_all = []
+        self.match_percentage = None
+
+    def update_items_matching(item_id):
+        self.items_matching.append(item_id)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##############################################################################
+######################### Inventory Selection ################################
+##############################################################################
+
+
+
 def connect_db():
     db = sqlite3.connect("polyvore.db")
     return db
@@ -90,6 +140,74 @@ def main():
     print selected_inventory
 
 
+##############################################################################
+########################### Matching to Sets #################################
+##############################################################################
+
+# Step 1 of the process
+# Given the Items_Sets list, only pull out the records where item = in selected inventory
+# ---> Need to index the Items_Sets table on item_id
+def get_subset_based_on_items(db, selected_inventory):
+
+    query_template = """SELECT * FROM Test WHERE item_id IN (%s)"""
+    q_marks_string = ", ".join(["?"] * len(selected_inventory))
+    query = query_template % q_marks_string
+
+    cursor = db.execute(query, tuple(selected_inventory))
+    result = [  row for row in cursor.fetchall()  ]
+    return result
+
+
+# Step 2 of the process
+# Now that we have the subset, group the items into the sets
+def aggregate_into_sets(db, selected_inventory, subset):
+
+    """
+    selected_inventory = a list of item_ids
+    subset = subset of records from Items_Sets
+    """
+
+    d = {}
+
+    for record in subset:
+
+        item_id = record[1]
+        set_id = record[2]
+
+        if d.get(set_id) == None:   # Means the set has not been recorded yet
+            d[set_id] = [item_id]   # Create a new list and store this item as the first entry
+        else:                           # Else
+            d[set_id].append(item_id)   # Add this item_id to the existing entry
+
+    for key, value in d.iteritems():
+        print "+++++++++++++++++"
+        print key
+        print value
+
+    """Returns this dictionary: but it only includes matching items"""
+    """Need to go back through and get the rest of the items"""
+
+
+
+def return_matching_sets(db, selected_inventory):
+
+    print selected_inventory
+
+
+ 
+    # Takes a list of items that the user has selected as being in the inventory
+    # Goes through all the sets in the database and finds the matching ones
+
+    # -----> To make it run quickly for now, only go through first 5,000 sets
+
+    # -----> This is going to need to call a bunch of sub-functions (see diagram in notebook)
+    # -----> Rank the sets by % match, or have a cutoff (put this in sub-function)
+
+    # RETURN DUMMY DATA FOR NOW
+    # Ultimately return a list of set objects that contains lots of different data that I need
+    # (so that we don't have to call this function over and over)
+    result = selected_inventory
+    return result
 
 
 
