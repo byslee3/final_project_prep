@@ -227,22 +227,41 @@ def calculate_percent_match(db, set_dictionary):
 # Step 3b of the process
 # Return all of the sets that have a percent match above a certain cutoff
 def return_sets_above_cutoff(db, set_dictionary, cutoff):
-    pass
+
+    d = {}
+
+    for key, set_object in set_dictionary.iteritems():
+
+        if set_object.percent_match >= cutoff:
+            d[key] = set_object
+
+    return d
 
 
-def ultimate():
+# Final result that gets called by the web interface
+def return_matching_sets(db, selected_inventory):
 
-    global selected_inventory_test
+    cutoff_percent = 50
 
-    db = connect_db()
+    # Get subset of records for this analysis
+    subset = get_subset_all_items(db, selected_inventory)
 
-    subset = get_subset_all_items(db, selected_inventory_test)
+    # Aggregate into set dictionary
+    set_dict = aggregate_into_sets(db, selected_inventory, subset)
 
-    set_dict = aggregate_into_sets(db, selected_inventory_test, subset)
+    # Calculate the percentage match
+    set_dict = calculate_percent_match(db, set_dict)
 
-    final = calculate_percent_match(db, set_dict)
+    # Return sets above the cutoff
+    final_matching = return_sets_above_cutoff(db, set_dict, cutoff_percent)
 
-    for key, obj in final.iteritems():
+    return final_matching
+
+
+# For testing purposes
+def print_set_dict(d):
+
+    for key, obj in d.iteritems():
         print "****************************"
         print obj.items_matching
         print obj.items_missing
@@ -252,25 +271,14 @@ def ultimate():
 
 
 
-def return_matching_sets(db, selected_inventory):
-
-    print selected_inventory
 
 
- 
-    # Takes a list of items that the user has selected as being in the inventory
-    # Goes through all the sets in the database and finds the matching ones
 
-    # -----> To make it run quickly for now, only go through first 5,000 sets
 
-    # -----> This is going to need to call a bunch of sub-functions (see diagram in notebook)
-    # -----> Rank the sets by % match, or have a cutoff (put this in sub-function)
 
-    # RETURN DUMMY DATA FOR NOW
-    # Ultimately return a list of set objects that contains lots of different data that I need
-    # (so that we don't have to call this function over and over)
-    result = selected_inventory
-    return result
+
+
+
 
 
 
