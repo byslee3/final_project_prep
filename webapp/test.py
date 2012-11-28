@@ -54,6 +54,10 @@ db = connect_db()
 # This works
 def get_starting_items(db):
 
+    """
+    Return a list of dictionaries
+    """
+
     # Get list of unique items
     query = """SELECT DISTINCT item_id FROM Test"""
     cursor = db.execute(query)
@@ -271,6 +275,11 @@ def print_set_dict(d):
 
 
 
+##############################################################################
+##############################################################################
+########################### Return Updated Sets ##############################
+##############################################################################
+##############################################################################
 
 
 
@@ -279,8 +288,15 @@ def print_set_dict(d):
 
 
 
+def return_updated_sets(existing_sets, new_item):
 
+    # Take the existing list of set objects
+    # Take the new item and move it from the attribute:missing item >>> to the attribute:matching items
+    # Recalculate the matching percentages
 
+    # RETURN DUMMY DATA FOR NOW
+    result = ["setA_obj", "setB_obj", "setC_obj", "setD_obj", "setE_obj"]
+    return result
 
 
 

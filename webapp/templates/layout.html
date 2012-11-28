@@ -22,8 +22,13 @@
             {% endif %}
         {% endwith %}
 
+        <a href = "{{  url_for("start")  }}">back to start page</a> | 
+        <a href = "{{  url_for("clear_inventory")  }}">clear inventory</a>
+
         {% block body %}
         {% endblock %}
+
+
 
     </body>
 

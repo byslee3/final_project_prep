@@ -1,6 +1,5 @@
 {% extends "layout.html" %}
 {% block body %}
-<a href="{{  url_for("start")  }}">back</a>
 
 
 {{ checklist }}
@@ -19,7 +18,7 @@ This is the selected inventory. <br>
 
 <br>
 <br>
-These are the resulting sets that already exist. (and/or that can be formed if you add this new item) <br>
+These are the resulting sets that already exist. (and/or that can be formed if you add this new item)<br>
 You can currently access {{ existing_sets|length }} combinations.
 
     {% for set in existing_sets %}
@@ -27,6 +26,34 @@ You can currently access {{ existing_sets|length }} combinations.
             {{set}}
         </ul></li>
     {% endfor %}
+
+<br>
+<br>
+For testing purposes:
+
+    <ul>
+    {% for set_obj in result_test %}
+        <li> {{set_obj}} <br>
+            <ul>
+                <li>
+                    Matching items: 
+                        {% for item in set_obj.items_matching %}
+                            {{item}}
+                        {% endfor %}
+                </li>
+                <li>
+                    Missing items:
+                        {% for item in set_obj.items_missing %}
+                            {{item}}
+                        {% endfor %}
+                </li>
+                <li> Total items: {{ set_obj.total_items }} </li>
+                <li> Percent match: {{ set_obj.percent_match }} </li>
+            </ul>
+        </li>
+    <br>
+    {% endfor %}
+    </ul>
 
 
 <br>

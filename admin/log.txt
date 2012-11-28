@@ -198,6 +198,15 @@ Monday - Nov 26
 
 Learning: Always just do the minimum necessary, instead of investing a lot of time trying to make it perfect at each step. Always go back and improve it later, but build out a test case first, so you don't waste your time trying to perfect something that ultimately doesn't work. Always do a test case first!!!!!
 
+=============================
+
+Tuesday - Nov 27
+
+* Finish writing Python interface for matching sets
+
+
+
+
 
 
 =============================
@@ -205,6 +214,7 @@ If it works:
 ---> Build out web interface
 ---> Pull more data *** When re-pulling this data start from 100 items that I think are staples
      That way we can be sure of having a starter group of items that works
+---> Still need to do the part where they can choose additional items and see how that changes the available sets
 
 
 
