@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<br>
+
+Here are the items that you selected:
+
+<br>
+    {% for item in selected_inventory %}
+        <ul><li>
+        {{ item }}
+        </ul></li>
+    {% endfor %}
+
+<br>
+Ready to see your set combinations? 
+
+<a href = "{{  url_for("combinations")  }}">Yes</a>
+
+{% endblock %}

@@ -216,7 +216,7 @@ def calculate_percent_match(db, set_dictionary):
 
 # Step 3b of the process
 # Return all of the sets that have a percent match above a certain cutoff
-def return_sets_above_cutoff(db, set_dictionary, cutoff):
+def return_sets_above_cutoff(set_dictionary, cutoff):
 
     d = {}
 
@@ -248,7 +248,7 @@ def return_matching_sets(db, selected_inventory):
     set_dict = calculate_percent_match(db, set_dict)
 
     # Return sets above the cutoff
-    final_matching = return_sets_above_cutoff(db, set_dict, cutoff_percent)
+    final_matching = return_sets_above_cutoff(set_dict, cutoff_percent)
 
     return final_matching
 
@@ -273,22 +273,46 @@ def print_set_dict(d):
 ##############################################################################
 
 
+def get_suggested_items(existing_sets):
 
+    """
+    Pass in a dictionary of {set_id: set_object}
+    Return a list of item_ids
+    ---> Later, should refine this method
+    """
 
+    result = []
 
+    for key, set_object in existing_sets.iteritems():
+        result.extend(set_object.items_missing)
 
-
-
-def return_updated_sets(existing_sets, new_item):
-
-    # Take the existing list of set objects
-    # Take the new item and move it from the attribute:missing item >>> to the attribute:matching items
-    # Recalculate the matching percentages
-
-    # RETURN DUMMY DATA FOR NOW
-    result = ["setA_obj", "setB_obj", "setC_obj", "setD_obj", "setE_obj"]
     return result
 
+
+
+
+def return_updated_sets(existing_sets, list_of_new_items):
+
+    """
+    Pass in a dictionary of {set_id: set_object}. Usually this will be the currently matching sets
+    Pass in an item_id for a potential new item
+    Take the new item and move it from set_object.items_missing ---> set_object.items_matching
+    Recalculate the matching percentages
+    Returns a dictionary of format {set_id: set_object}
+    ---> It feels like the runtime for this could be very long
+    """
+
+    for key, set_object in existing_sets.iteritems():
+
+        for item_id in set_object.items_missing:
+
+            if item_id in list_of_new_items:
+
+                set_object.items_missing.remove(item_id)
+                set_object.items_matching.append(item_id)
+                set_object.calculate_percent_match
+
+    return existing_sets
 
 
 

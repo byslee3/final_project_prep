@@ -33,8 +33,12 @@ def teardown_request(exception):
 #############################
 
 """ Is there a way to get data from webpage without using these? """
+""" Or, to have these global variables, but associated with a specific session """
 
-selected_inventory = []
+SELECTED_INVENTORY = []
+MATCHING_SETS = []
+INITIAL_COMBOS = True
+HYPOTHETICAL_INVENTORY = []
 
 
 
@@ -51,8 +55,8 @@ def start():
 
 @app.route("/clear_inventory")
 def clear_inventory():
-    global selected_inventory
-    selected_inventory = []
+    global SELECTED_INVENTORY
+    SELECTED_INVENTORY = []
     return redirect("/start")
 
 
@@ -72,22 +76,22 @@ def inventory():
 @app.route("/next_inventory", methods=["GET", "POST"])
 def next_inventory():
 
-    global selected_inventory
+    global SELECTED_INVENTORY
 
-    if len(selected_inventory) < 19:
+    if len(SELECTED_INVENTORY) < 19:
 
-        # Enter this round's selection into the selected_inventory
+        # Enter this round's selection into the SELECTED_INVENTORY
         this_round_selection = request.form.keys()
-        selected_inventory.extend(this_round_selection)
+        SELECTED_INVENTORY.extend(this_round_selection)
 
         # Get the next round of potential inventory and render template
-        next_inventory = engine2.get_next_items(g.db, this_round_selection, selected_inventory)
+        next_inventory = engine2.get_next_items(g.db, this_round_selection, SELECTED_INVENTORY)
 
         return render_template("inventory.html",
             potential_inventory = next_inventory,
             initial_round = False,
             this_round_selection = this_round_selection,
-            total_inventory = selected_inventory)
+            total_inventory = SELECTED_INVENTORY)
 
     else:
 
@@ -98,62 +102,83 @@ def next_inventory():
 @app.route("/before_combinations", methods=["GET"])
 def before_combinations():
 
-    global selected_inventory
+    global SELECTED_INVENTORY
 
     return render_template("before_combinations.html", 
-        selected_inventory = selected_inventory)
+        selected_inventory = SELECTED_INVENTORY)
 
 
 @app.route("/combinations", methods=["GET", "POST"])
 def combinations():
 
-    global selected_inventory
+    global SELECTED_INVENTORY
+    global MATCHING_SETS
+    global INITIAL_COMBOS
+    global HYPOTHETICAL_INVENTORY
 
-    # Get a list of set objects that match
-    result_dictionary = engine2.return_matching_sets(g.db, selected_inventory)
+    # If it's the first time we are returning matching sets
+    if INITIAL_COMBOS:
 
-    result_test = []
-    for key, set_obj in result_dictionary.iteritems():
-        result_test.append(set_obj)
+        INITIAL_COMBOS = False
 
+        # Get the matching sets
+        # Get a list of potential items
+        # Pass them to the render template
 
-    # Pull out the set URLs from the set objects (need to implement)
-    existing_sets = []
+        MATCHING_SETS = engine2.return_matching_sets(g.db, SELECTED_INVENTORY)
 
-    for key, set_obj in result_dictionary.iteritems():
-        set_id = set_obj.set_id   # In the future, pull the set URL instead
-        existing_sets.append(set_id)
+        potential_items = engine2.get_suggested_items(MATCHING_SETS)
 
-    # Pull out the suggested items from the set objects (need to implement)
-    suggested_items = ["d", "e", "f"]  # This will be an attribute in the future
+        matching_sets_list = []
+        for key, set_obj in MATCHING_SETS.iteritems():
+            matching_sets_list.append(set_obj)
 
-    return render_template("combinations.html",
-        selected_inventory = selected_inventory,
-        existing_sets = existing_sets,
-        suggested_items = suggested_items,
-        result_test = result_test)  # Pass the entire result dictionary in for testing purposes
+        return render_template("combinations.html",
+            selected_inventory = SELECTED_INVENTORY,
+            existing_sets = matching_sets_list,
+            suggested_items = potential_items)
 
 
-@app.route("/update_combinations", methods=["GET", "POST"])
-def update_combinations():
+    # Else, we are updating sets
+    else:
 
-    """ ?????????????? """
-    """ Need to figure out this part """
-    """ ?????????????? """
-    existing_sets = "x"  # -----> How to grab this from inventory.html?
-    new_item = "x"  # -----> How to grab this from inventory.html?
+        # Get the newly selected items
+        # Update the existing sets
+        # Check again to see which ones match
+        # Get another list of potential items
+        # Pass them to the render template
+        # ---> Could expand this in the future to call on the database and continue expanding
 
-    updated_result = engine.return_updated_sets(existing_sets, new_item)
+        newly_selected_items = request.form.keys()
+        print "newly selected items"
+        print newly_selected_items
 
-    """ Should be able to pull these out from the updated_result list"""
-    selected_inventory = ["temp1", "temp2", "temp3", "temp4", "temp5"]
-    suggested_items = ["itemA", "itemB", "itemC"]
+        updated_sets = engine2.return_updated_sets(MATCHING_SETS, newly_selected_items)
+        hypothetical_matching_sets = engine2.return_sets_above_cutoff(updated_sets, 50)
 
-    return render_template(
-        "combinations.html", 
-        selected_inventory=selected_inventory, 
-        existing_sets=existing_sets, 
-        suggested_items=suggested_items)
+        potential_items = engine2.get_suggested_items(hypothetical_matching_sets)
+
+        matching_sets_list = []
+        for key, set_obj in hypothetical_matching_sets.iteritems():
+            matching_sets_list.append(set_obj)
+
+        return render_template("combinations.html",
+            selected_inventory = SELECTED_INVENTORY,
+            existing_sets = matching_sets_list,
+            suggested_items = potential_items)
+
+    """ Debug this first -- not totally working (or is this only b/c I haven't added several iterations? """
+    """ Test this by selecting everything on the first iteration, all sets should go to 100 """
+    """ But we need to pass in ALL the sets in updated_sets, not just the matching sets """        
+    """ Because otherwise it won't move any new sets past the cutoff point"""
+    """ Dammit! That means we need to change getting the potential items -- to get ALL the items and not just the ones in matching sets"""
+            # ---> So that means we'll need to filter the potential items
+            # ---> To only those that would bump you over the cutoff
+
+
+    """ Make it possible to do this through several iterations """
+    """ Add a way to clear the additions and return to original combinations result page """
+
 
 
 

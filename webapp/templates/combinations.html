@@ -23,7 +23,7 @@ You can currently access {{ existing_sets|length }} combinations.
 
     {% for set in existing_sets %}
         <ul><li>
-            {{set}}
+            {{ set.set_id }}
         </ul></li>
     {% endfor %}
 
@@ -32,23 +32,23 @@ You can currently access {{ existing_sets|length }} combinations.
 For testing purposes:
 
     <ul>
-    {% for set_obj in result_test %}
-        <li> {{set_obj}} <br>
+    {% for set in existing_sets %}
+        <li> {{ set }} : {{ set.set_id }} <br>
             <ul>
                 <li>
                     Matching items: 
-                        {% for item in set_obj.items_matching %}
-                            {{item}}
+                        {% for item in set.items_matching %}
+                            {{ item }},
                         {% endfor %}
                 </li>
                 <li>
                     Missing items:
-                        {% for item in set_obj.items_missing %}
-                            {{item}}
+                        {% for item in set.items_missing %}
+                            {{ item }},
                         {% endfor %}
                 </li>
-                <li> Total items: {{ set_obj.total_items }} </li>
-                <li> Percent match: {{ set_obj.percent_match }} </li>
+                <li> Total items: {{ set.total_items }} </li>
+                <li> Percent match: {{ set.percent_match }} </li>
             </ul>
         </li>
     <br>
@@ -60,10 +60,33 @@ For testing purposes:
 <br>
 These are the potential new items.
 <br>
-    {% for item in suggested_items %}
-        <ul><li>
-            {{item}} ----- <a href="{{  url_for("update_combinations")  }}">what if i added this?</a>
-        </ul></li>
-    {% endfor %}
+
+    <form action = "{{  url_for("combinations")  }}" method = "POST">
+
+        <input type="submit" value="what if i added these?">
+
+            <ul>
+            {% for item_id in suggested_items %}
+
+                <li>
+                {{ item_id }} <input type = "checkbox" name = "{{  item_id  }}" value = 1>
+                </li>
+
+            {% endfor %}
+            </ul>
+
+    </form>
 
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
