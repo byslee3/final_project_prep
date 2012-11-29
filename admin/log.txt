@@ -204,17 +204,27 @@ Tuesday - Nov 27
 
 * Finish writing Python interface for matching sets
 
+=============================
 
+Wednesday - Nov 28 - Only had about 2 hours
+
+* Write the part where they can choose additional items and see how that changes the available sets
+
+=============================
+
+Thursday - Nov 29
+
+* Debug the "choosing additional items part"
 
 
 
 
 =============================
 If it works:
----> Build out web interface
+---> Bootstrap / some mild UX
 ---> Pull more data *** When re-pulling this data start from 100 items that I think are staples
      That way we can be sure of having a starter group of items that works
----> Still need to do the part where they can choose additional items and see how that changes the available sets
+---> Getting it onto my laptop and/or hosting
 
 
 
