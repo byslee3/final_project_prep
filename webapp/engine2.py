@@ -2,18 +2,6 @@ import sqlite3
 import random
 
 
-# For testing purposes
-selected_inventory_test = [
-'57295956', '67870971', '67861593', '14428033',
-'24719080', '29485094', '43783147', '58034310',
-'9275563', '69635837', '64527026', '62855670',
-'9497001', '7556411', '67870785', '66786539',
-'66866385', '66032594', '69920782', '65283476',
-'67309090']
-
-
-
-
 ##############################################################################
 ########################### Class Definition #################################
 ##############################################################################
@@ -45,10 +33,6 @@ class Set(object):
 def connect_db():
     db = sqlite3.connect("polyvore.db")
     return db
-
-
-# Testing purposes
-db = connect_db()
 
 
 # This works
@@ -228,16 +212,14 @@ def return_sets_above_cutoff(set_dictionary, cutoff):
     return d
 
 
-# Final result that gets called by the web interface
-def return_matching_sets(db, selected_inventory):
+# Step X: Get all of the potential matching sets, not just the ones above cutoff
+# We'll need this later for getting the suggested items
+def all_potential_sets(db, selected_inventory):
 
     """
     Returns a dictionary with each entry as:
     { set_id: set_object }
     """
-
-    cutoff_percent = 50
-
     # Get subset of records for this analysis
     subset = get_subset_all_items(db, selected_inventory)
 
@@ -247,8 +229,22 @@ def return_matching_sets(db, selected_inventory):
     # Calculate the percentage match
     set_dict = calculate_percent_match(db, set_dict)
 
+    return set_dict
+
+
+# Final result that gets called by the web interface
+# Pass it Step X to get here, since we'll need Step X elsewhere in recommender.py
+def return_matching_sets(db, all_potential_sets):
+
+    """
+    Returns a dictionary with each entry as:
+    { set_id: set_object }
+    """
+
+    cutoff_percent = 50
+
     # Return sets above the cutoff
-    final_matching = return_sets_above_cutoff(set_dict, cutoff_percent)
+    final_matching = return_sets_above_cutoff(all_potential_sets, cutoff_percent)
 
     return final_matching
 
@@ -273,9 +269,10 @@ def print_set_dict(d):
 ##############################################################################
 
 
-def get_suggested_items(existing_sets):
+def get_suggested_items(all_potential_sets):
 
     """
+    Need to get the set_dictionary BEFORE we only get the ones with the cutoffs
     Pass in a dictionary of {set_id: set_object}
     Return a list of item_ids
     ---> Later, should refine this method
@@ -283,7 +280,7 @@ def get_suggested_items(existing_sets):
 
     result = []
 
-    for key, set_object in existing_sets.iteritems():
+    for key, set_object in all_potential_sets.iteritems():
         result.extend(set_object.items_missing)
 
     return result
@@ -291,28 +288,159 @@ def get_suggested_items(existing_sets):
 
 
 
-def return_updated_sets(existing_sets, list_of_new_items):
+def return_updated_sets(all_potential_sets, list_of_new_items):
 
     """
     Pass in a dictionary of {set_id: set_object}. Usually this will be the currently matching sets
     Pass in an item_id for a potential new item
     Take the new item and move it from set_object.items_missing ---> set_object.items_matching
+    (need to use a roundabout way because you can't modify the list at the same time you are iterating through it)
+    (list references are weird)
     Recalculate the matching percentages
     Returns a dictionary of format {set_id: set_object}
     ---> It feels like the runtime for this could be very long
     """
 
-    for key, set_object in existing_sets.iteritems():
+    for key, set_object in all_potential_sets.iteritems():
 
-        for item_id in set_object.items_missing:
+        move_these_items = []
+        keep_these_in_missing = []
 
-            if item_id in list_of_new_items:
+        for missing_item in set_object.items_missing:
 
-                set_object.items_missing.remove(item_id)
-                set_object.items_matching.append(item_id)
-                set_object.calculate_percent_match
+            if missing_item in list_of_new_items:
 
-    return existing_sets
+                move_these_items.append(missing_item)
+
+            else:
+
+                keep_these_in_missing.append(missing_item)
+
+        # Update the set object
+        set_object.items_missing = keep_these_in_missing
+        set_object.items_matching.extend(move_these_items)
+        set_object.calculate_percent_match()
+
+    return all_potential_sets
+
+
+##############################################################################
+############################# More testing ###################################
+##############################################################################
+
+a = Set("62448472")
+a.items_missing = ['49816691','64319388','67802164']
+a.items_matching = ['29524227', '65342355']
+a.calculate_total_items()
+a.calculate_percent_match()
+
+print "**********************"
+print a
+print "original items matching"
+print a.items_matching
+print "original items missing"
+print a.items_missing
+print "percent match"
+print a.percent_match
+print "**********************"
+
+before = {"62448472": a}
+
+print "**********************"
+print "BEFORE"
+
+for key, set_object in before.iteritems():
+    print set_object.items_matching
+    print set_object.items_missing
+    print set_object.percent_match
+
+print "**********************"
+
+list_of_new_items = ['64319388', '67802164', '49816691']
+
+after = return_updated_sets(before, list_of_new_items)
+
+print "**********************"
+print "AFTER"
+
+for key, set_object in after.iteritems():
+    print set_object.items_matching
+    print set_object.items_missing
+    print set_object.percent_match
+
+print "**********************"
+
+
+##############################################################################
+############################# Testing Vars ###################################
+##############################################################################
+
+db = connect_db()
+
+"""
+
+selected_inventory_test = ["68519560", "64888102",
+"69029707",
+"65176054",
+"67009179",
+"64181961",
+"65342355",
+"64108504",
+"67244905",
+"65232087",
+"63396515",
+"67365763",
+"43907865",
+"59764503",
+"31438308",
+"34129315",
+"15067690",
+"29524227",
+"59704080",
+"46179180",
+"31432829",
+"59174684",
+"10485009",
+"60055493",
+"59282239"]
+
+test_all_potential = all_potential_sets(db, selected_inventory_test)
+
+a_original = test_all_potential['62448472']
+
+print "**********************"
+print a_original
+print "original items matching"
+print a_original.items_matching
+print "original items missing"
+print a_original.items_missing
+print "percent match"
+print a_original.percent_match
+
+test_suggested_items = get_suggested_items(test_all_potential)
+
+test_newly_selected_items = ['64319388','49816691', '67802164']
+
+test_updated_sets = return_updated_sets(test_all_potential, test_newly_selected_items)
+
+a_updated = test_updated_sets['62448472']
+
+print "**********************"
+print a_updated
+print "updated items matching"
+print a_updated.items_matching
+print "updated items missing"
+print a_updated.items_missing
+print "percent match"
+print a_updated.percent_match
+print "**********************"
+
+"""
+
+
+
+
+
 
 
 

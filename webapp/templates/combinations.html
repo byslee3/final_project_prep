@@ -8,6 +8,8 @@
 <br>
 This is the selected inventory. <br>
 
+{#
+
     {% for item in selected_inventory %}
         <ul><li>
             {{ item }}
@@ -16,9 +18,18 @@ This is the selected inventory. <br>
 <br>
 <br>
 
+#}
+
+
+Testing things:
+Which_run = {{ which_run }}
 <br>
 <br>
-These are the resulting sets that already exist. (and/or that can be formed if you add this new item)<br>
+In total, there are {{ all_potential_sets|length }} combinations that you would be able to access.
+
+<br>
+<br>
+
 You can currently access {{ existing_sets|length }} combinations.
 
     {% for set in existing_sets %}

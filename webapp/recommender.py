@@ -36,9 +36,10 @@ def teardown_request(exception):
 """ Or, to have these global variables, but associated with a specific session """
 
 SELECTED_INVENTORY = []
-MATCHING_SETS = []
+MATCHING_SETS = {}
 INITIAL_COMBOS = True
-HYPOTHETICAL_INVENTORY = []
+HYPOTHETICAL_MATCHING_SETS = {}
+ALL_POTENTIAL_SETS = {}
 
 
 
@@ -55,8 +56,19 @@ def start():
 
 @app.route("/clear_inventory")
 def clear_inventory():
+
     global SELECTED_INVENTORY
+    global MATCHING_SETS
+    global INITIAL_COMBOS
+    global HYPOTHETICAL_MATCHING_SETS
+    global ALL_POTENTIAL_SETS
+
     SELECTED_INVENTORY = []
+    MATCHING_SETS = {}
+    INITIAL_COMBOS = True
+    HYPOTHETICAL_MATCHING_SETS = {}
+    ALL_POTENTIAL_SETS = {}
+
     return redirect("/start")
 
 
@@ -111,13 +123,15 @@ def before_combinations():
 @app.route("/combinations", methods=["GET", "POST"])
 def combinations():
 
-    global SELECTED_INVENTORY
-    global MATCHING_SETS
     global INITIAL_COMBOS
-    global HYPOTHETICAL_INVENTORY
 
     # If it's the first time we are returning matching sets
     if INITIAL_COMBOS:
+
+        global SELECTED_INVENTORY
+        global MATCHING_SETS
+        global HYPOTHETICAL_MATCHING_SETS
+        global ALL_POTENTIAL_SETS
 
         INITIAL_COMBOS = False
 
@@ -125,22 +139,52 @@ def combinations():
         # Get a list of potential items
         # Pass them to the render template
 
-        MATCHING_SETS = engine2.return_matching_sets(g.db, SELECTED_INVENTORY)
+        ALL_POTENTIAL_SETS = engine2.all_potential_sets(g.db, SELECTED_INVENTORY)
 
-        potential_items = engine2.get_suggested_items(MATCHING_SETS)
+        MATCHING_SETS = engine2.return_matching_sets(g.db, ALL_POTENTIAL_SETS)
+
+        potential_items = engine2.get_suggested_items(ALL_POTENTIAL_SETS)
 
         matching_sets_list = []
         for key, set_obj in MATCHING_SETS.iteritems():
             matching_sets_list.append(set_obj)
 
+        print "*****************************"
+        print "*****************************"
+        print "*****************************"
+        print "all_potential_sets"
+        print len(ALL_POTENTIAL_SETS)
+        for key, value in ALL_POTENTIAL_SETS.iteritems():
+            print value
+        print "*****************************"
+        print "MATCHING_SETS"
+        print len(MATCHING_SETS)
+        for key, value in MATCHING_SETS.iteritems():
+            print value
+        print "*****************************"
+        print len(potential_items)
+        print "potential_items"
+        for row in potential_items:
+            print row
+        print "*****************************"
+        print "matching_sets_list"
+        print len(matching_sets_list)
+        for row in matching_sets_list:
+            print row
+        print "*****************************"
+        print "*****************************"
+        print "*****************************"
+
         return render_template("combinations.html",
             selected_inventory = SELECTED_INVENTORY,
             existing_sets = matching_sets_list,
-            suggested_items = potential_items)
+            suggested_items = potential_items,
+            all_potential_sets = ALL_POTENTIAL_SETS,
+            which_run = "if statement")
 
 
     # Else, we are updating sets
-    else:
+    elif not INITIAL_COMBOS:
 
         # Get the newly selected items
         # Update the existing sets
@@ -153,19 +197,48 @@ def combinations():
         print "newly selected items"
         print newly_selected_items
 
-        updated_sets = engine2.return_updated_sets(MATCHING_SETS, newly_selected_items)
-        hypothetical_matching_sets = engine2.return_sets_above_cutoff(updated_sets, 50)
+        ALL_POTENTIAL_SETS = engine2.return_updated_sets(ALL_POTENTIAL_SETS, newly_selected_items)
 
-        potential_items = engine2.get_suggested_items(hypothetical_matching_sets)
+        HYPOTHETICAL_MATCHING_SETS = engine2.return_sets_above_cutoff(ALL_POTENTIAL_SETS, 50)
+
+        potential_items = engine2.get_suggested_items(ALL_POTENTIAL_SETS)
 
         matching_sets_list = []
-        for key, set_obj in hypothetical_matching_sets.iteritems():
+        for key, set_obj in HYPOTHETICAL_MATCHING_SETS.iteritems():
             matching_sets_list.append(set_obj)
+
+        print "*****************************"
+        print "*****************************"
+        print "*****************************"
+        print "all_potential_sets"
+        print len(ALL_POTENTIAL_SETS)
+        for key, value in ALL_POTENTIAL_SETS.iteritems():
+            print value
+        print "*****************************"
+        print "HYPOTHETICAL_MATCHING_SETS"
+        print len(HYPOTHETICAL_MATCHING_SETS)
+        for key, value in HYPOTHETICAL_MATCHING_SETS.iteritems():
+            print value
+        print "*****************************"
+        print len(potential_items)
+        print "potential_items"
+        for row in potential_items:
+            print row
+        print "*****************************"
+        print "matching_sets_list"
+        print len(matching_sets_list)
+        for row in matching_sets_list:
+            print row
+        print "*****************************"
+        print "*****************************"
+        print "*****************************"
 
         return render_template("combinations.html",
             selected_inventory = SELECTED_INVENTORY,
             existing_sets = matching_sets_list,
-            suggested_items = potential_items)
+            suggested_items = potential_items,
+            all_potential_sets = ALL_POTENTIAL_SETS,
+            which_run = "else statement")
 
     """ Debug this first -- not totally working (or is this only b/c I haven't added several iterations? """
     """ Test this by selecting everything on the first iteration, all sets should go to 100 """
