@@ -214,17 +214,37 @@ Wednesday - Nov 28 - Only had about 2 hours
 
 Thursday - Nov 29
 
-* Debug the "choosing additional items part"
+* Installed environment on my laptop
+
+=============================
+
+Friday - Nov 30
+
+* Debugging the "select additional items" part
+    Problem was with list references: Iterating through a list while deleting parts of it
+    And also how sometimes variables are just POINTERS to a location, not actually creating new data
+    Seems to be true in the case of a dictionary? So you need to be careful about changing the original location
+
+* Added feature to clear the hypothetical selections and start over from your declared inventory
+
+* Need to refine the "suggested items" so it's not such a long list
+
 
 
 
 
 =============================
-If it works:
----> Bootstrap / some mild UX
+Finish by Monday:
+---> Refine the process for "Suggested Items"
+---> Figure out how to make the pictures show up
+---> Make it look good using Bootstrap
+---> Get it working on my laptop or figure out how to host it
+
+=============================
+Finish in future:
 ---> Pull more data *** When re-pulling this data start from 100 items that I think are staples
      That way we can be sure of having a starter group of items that works
----> Getting it onto my laptop and/or hosting
+---> Start on data mining
 
 
 

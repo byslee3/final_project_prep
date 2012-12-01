@@ -328,6 +328,11 @@ def return_updated_sets(all_potential_sets, list_of_new_items):
 ############################# More testing ###################################
 ##############################################################################
 
+"""
+THIS TEST WORKS
+Testing the return_updated_sets function when we directly pass in a small set of values to it
+
+
 a = Set("62448472")
 a.items_missing = ['49816691','64319388','67802164']
 a.items_matching = ['29524227', '65342355']
@@ -369,15 +374,17 @@ for key, set_object in after.iteritems():
     print set_object.percent_match
 
 print "**********************"
-
+"""
 
 ##############################################################################
 ############################# Testing Vars ###################################
 ##############################################################################
 
-db = connect_db()
-
 """
+THIS TEST ALSO WORKS
+Testing the whole process as it should be passed in from Flask
+
+db = connect_db()
 
 selected_inventory_test = ["68519560", "64888102",
 "69029707",
@@ -421,9 +428,9 @@ test_suggested_items = get_suggested_items(test_all_potential)
 
 test_newly_selected_items = ['64319388','49816691', '67802164']
 
-test_updated_sets = return_updated_sets(test_all_potential, test_newly_selected_items)
+test_all_potential = return_updated_sets(test_all_potential, test_newly_selected_items)
 
-a_updated = test_updated_sets['62448472']
+a_updated = test_all_potential['62448472']
 
 print "**********************"
 print a_updated

@@ -149,32 +149,6 @@ def combinations():
         for key, set_obj in MATCHING_SETS.iteritems():
             matching_sets_list.append(set_obj)
 
-        print "*****************************"
-        print "*****************************"
-        print "*****************************"
-        print "all_potential_sets"
-        print len(ALL_POTENTIAL_SETS)
-        for key, value in ALL_POTENTIAL_SETS.iteritems():
-            print value
-        print "*****************************"
-        print "MATCHING_SETS"
-        print len(MATCHING_SETS)
-        for key, value in MATCHING_SETS.iteritems():
-            print value
-        print "*****************************"
-        print len(potential_items)
-        print "potential_items"
-        for row in potential_items:
-            print row
-        print "*****************************"
-        print "matching_sets_list"
-        print len(matching_sets_list)
-        for row in matching_sets_list:
-            print row
-        print "*****************************"
-        print "*****************************"
-        print "*****************************"
-
         return render_template("combinations.html",
             selected_inventory = SELECTED_INVENTORY,
             existing_sets = matching_sets_list,
@@ -194,8 +168,6 @@ def combinations():
         # ---> Could expand this in the future to call on the database and continue expanding
 
         newly_selected_items = request.form.keys()
-        print "newly selected items"
-        print newly_selected_items
 
         ALL_POTENTIAL_SETS = engine2.return_updated_sets(ALL_POTENTIAL_SETS, newly_selected_items)
 
@@ -207,32 +179,6 @@ def combinations():
         for key, set_obj in HYPOTHETICAL_MATCHING_SETS.iteritems():
             matching_sets_list.append(set_obj)
 
-        print "*****************************"
-        print "*****************************"
-        print "*****************************"
-        print "all_potential_sets"
-        print len(ALL_POTENTIAL_SETS)
-        for key, value in ALL_POTENTIAL_SETS.iteritems():
-            print value
-        print "*****************************"
-        print "HYPOTHETICAL_MATCHING_SETS"
-        print len(HYPOTHETICAL_MATCHING_SETS)
-        for key, value in HYPOTHETICAL_MATCHING_SETS.iteritems():
-            print value
-        print "*****************************"
-        print len(potential_items)
-        print "potential_items"
-        for row in potential_items:
-            print row
-        print "*****************************"
-        print "matching_sets_list"
-        print len(matching_sets_list)
-        for row in matching_sets_list:
-            print row
-        print "*****************************"
-        print "*****************************"
-        print "*****************************"
-
         return render_template("combinations.html",
             selected_inventory = SELECTED_INVENTORY,
             existing_sets = matching_sets_list,
@@ -240,18 +186,15 @@ def combinations():
             all_potential_sets = ALL_POTENTIAL_SETS,
             which_run = "else statement")
 
-    """ Debug this first -- not totally working (or is this only b/c I haven't added several iterations? """
-    """ Test this by selecting everything on the first iteration, all sets should go to 100 """
-    """ But we need to pass in ALL the sets in updated_sets, not just the matching sets """        
-    """ Because otherwise it won't move any new sets past the cutoff point"""
-    """ Dammit! That means we need to change getting the potential items -- to get ALL the items and not just the ones in matching sets"""
-            # ---> So that means we'll need to filter the potential items
-            # ---> To only those that would bump you over the cutoff
 
+@app.route("/clear_hypotheticals", methods = ["GET", "POST"])
+def clear_hypotheticals():
 
-    """ Make it possible to do this through several iterations """
-    """ Add a way to clear the additions and return to original combinations result page """
+    global INITIAL_COMBOS
 
+    INITIAL_COMBOS = True
+
+    return redirect("/combinations")
 
 
 
