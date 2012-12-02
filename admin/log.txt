@@ -231,33 +231,56 @@ Friday - Nov 30
 
 Saturday - Dec 1
 
-* Start doing some stuff in bootstrap
+* Start doing some stuff in bootstrap & UI
 * Wrote functions to make 4-item grid structure work
 * Added Item class definition
 * Fixed a bug that I couldn't identify before! With the program still looping when len(selected_inventory) > 20
-* More stuff in bootstrap
+* More stuff in bootstrap & UI
 
 =============================
 
-Next things to do
+Sunday - Dec 2
+
+* Fixed the UI throughout. Sets page now looks much better. Writing this text is fun.
+
+
+
+
+
+
+
+
+
+
+
+
+DO NOW
 
 * Refine the process for "Suggested Items" (or just pick 8 as a placeholder)
-* Implement Bootstrap on the Sets result page --> Figure out the correct UI
+
+
+
+
+
+
+
+
+
+
+
+=============================
+Next things to do
 * Add set imgurl whenever a Set Object is created
 * Link up the img urls from database for Items
 * Get all the image tags working
 * Image for start page
 * Colors and graphics throughout
-* (I should make the sets into thumbnails and link to the larger versions on Polyvore?)
-* (Or maybe make the sets results page into 2 columns?)
-
-   
+* Read through the Flask documentation
 =============================
-
 Monday
-
 * Refine the process for "Suggested Items"
 * Clean the database
+* Make the Sets page into a carousel
 
 
 

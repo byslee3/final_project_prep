@@ -1,13 +1,28 @@
 {% extends "layout.html" %}
 {% block body %}
 
-    <div class = "my-heading">
-        Why don't you try one of these?
-    </div>
+    {% if which_run == "initial" %}
 
-    <div class = "my-explanation">
-        you can currently access {{ existing_sets|length }} combinations
-    </div>
+        <div class = "my-heading">
+            Dress like a rockstar (not a hobo)
+        </div>
+
+        <div class = "my-explanation">
+            try pairing the items you already own into one of these {{ existing_sets|length }} combinations
+        </div>
+
+    {% else %}
+
+        <div class = "my-heading">
+            YES! More options
+        </div>
+
+        <div class = "my-explanation">
+            just like rachel zoe says. <em>"OPTIONS! I need more OPTIONS."</em><br>
+            now you can access {{ existing_sets|length }} combinations
+        </div>
+
+    {% endif %}
 
 
     {% for set in existing_sets %}
@@ -65,31 +80,61 @@
 
                                     END OF JINJA BLOCK COMMENT #}
 
+    {% if which_run == "initial" %}
 
-    <div class = "my-heading">
-        Expand your reach
-    </div>
+        <div class = "my-heading">
+            But I want more
+        </div>
 
-    <div class = "my-explanation">
-        who says shopping can't be a science? <br>
-        pick one of the following items and see how it expands your available outfits
-    </div>
+        <div class = "my-explanation">
+            who says shopping can't be a science? you need to allocate your money wisely <br>
+            try picking one of the following items and see how it expands your available outfits <br>
+            remember, even a $400 pair of shoes can be amortized to a $1 cost per wear
+        </div>
 
+    {% else %}
 
+        <div class = "my-heading">
+            And more...
+        </div>
+
+        <div class = "my-explanation">
+            keep going down the path of financial irresponsibility. wait, we meant RESPONSIBILITY. <br>
+            nothing could be more fiscally responsible than using algorithms to make cost-effective purchasing decisions.
+        </div>
+
+    {% endif %}
+
+    <!-- Grid for suggested items -->
 
     <form action = "{{  url_for("combinations")  }}" method = "POST">
 
-        <input type="submit" value="what if i added these?">
+        {% for group in suggested_items %}
 
-            <ul>
-            {% for item_id in suggested_items %}
+            <div class="row-fluid">
+                <div class = "span3">
+                    {{ group[0].item_id }}
+                    <input type="checkbox" name="{{ group[0].item_id }}" value=1>
+                </div>
+                <div class = "span3">
+                    {{ group[1].item_id }}
+                    <input type="checkbox" name="{{ group[1].item_id }}" value=1>
+                </div>
+                <div class = "span3">
+                    {{ group[2].item_id }}
+                    <input type="checkbox" name="{{ group[2].item_id }}" value=1>
+                </div>
+                <div class = "span3">
+                    {{ group[3].item_id }}
+                    <input type="checkbox" name="{{ group[3].item_id }}" value=1>
+                </div>
+            </div>
 
-                <li>
-                {{ item_id }} <input type = "checkbox" name = "{{  item_id  }}" value = 1>
-                </li>
+        {% endfor %}
 
-            {% endfor %}
-            </ul>
+        <div class="my-button">
+                <input type="submit" value="what happens if I add these?">
+        </div>
 
     </form>
 

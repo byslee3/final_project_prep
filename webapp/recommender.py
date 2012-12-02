@@ -170,7 +170,7 @@ def combinations():
             existing_sets = matching_sets_list,
             suggested_items = potential_items,
             all_potential_sets = ALL_POTENTIAL_SETS,
-            which_run = "if statement")
+            which_run = "initial")
 
 
     # Else, we are updating sets
@@ -200,7 +200,7 @@ def combinations():
             existing_sets = matching_sets_list,
             suggested_items = potential_items,
             all_potential_sets = ALL_POTENTIAL_SETS,
-            which_run = "else statement")
+            which_run = "loop")
 
 
 @app.route("/clear_hypotheticals", methods = ["GET", "POST"])
