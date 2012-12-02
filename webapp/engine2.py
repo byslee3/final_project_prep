@@ -1,5 +1,6 @@
 import sqlite3
 import random
+from operator import itemgetter
 
 
 ##############################################################################
@@ -508,75 +509,75 @@ def test5():
     print "length of table is %d items" % len(test_answer)
 
 
+def get_suggested_items(all_potential_sets, cutoff):
 
-# def get_suggested_items(all_potential_sets, cutoff, items_already_selected):
+    """
+    Takes in the following arguments:
+        Pass in a dictionary of {set_id: set_object}
+        Pass in cutoff as a float, where 50% cutoff is passed in as 50.0
+        Pass in items_already_selected, which is a list of item ids ["34234", "34559", "342098"]
+    Pick the top 16 suggested items
+    Return a list of item Objects, grouped into fours: [[obj1, obj2, obj3, obj4], [obj5, obj6, obj7, obj8]]
+    ---> CONTINUE TO REFINE THIS FUNCTION LATER. THIS CAN USE A LOT OF REFINEMENT.
+            ---> Weight an item more heavily if it helps bump 2+ sets over the cutoff
+            ---> This could go on infinitely? Would have to update the hypothetical inventory and pull new matching sets each time
+            ---> Runtime implications
+    """
 
-#     """
-#     Need to get the set_dictionary BEFORE we only get the ones with the cutoffs
-#     Pass in a dictionary of {set_id: set_object}
-#         Pass in cutoff as an integer, where 50% cutoff is passed in as 50
-#         Pass in items_already_selected, which is a list of item ids ["34234", "34559", "342098"]
-#     Pick the top 16 suggested items
-#     Return a list of item Objects, grouped into fours: [[obj1, obj2, obj3, obj4], [obj5, obj6, obj7, obj8]]
-#     ---> CONTINUE TO REFINE THIS FUNCTION LATER
-#             ---> Weight an item more heavily if it helps bump 2+ sets over the cutoff
-#             ---> This could go on infinitely? Would have to update the hypothetical inventory and pull new matching sets each time
-#             ---> Runtime implications
-#     """
+    """
+    Step 1: Get the item table
+    Step 2: Select only those items belonging to sets that are movable
+    Step 3: Rank order all the records by proximity to cutoff
+    Step 4: Select the top 16, accounting for dups
+    Step 5: Format list and return
+    """
 
-#     # Create the item table with the following columns in each row:
-#     #   Column1 = item_id
-#     #   Column2 = the set that it belongs to
-#     #   Column3 = current percent match of the set
-#     #   Column4 = difference between the percent match and the cutoff
-#     #   Column5 = would moving one item bump the set over the cutoff?
-#     item_table = []
+    ### Step 1: Get the item table
+    item_table = create_item_table(all_potential_sets, cutoff)
 
-#     for key, set_object in all_potential_sets.iteritems():
+    ### Step 2: Select only those items belonging to sets that are movable
+    item_table_movable = []
 
-#         set_id_test = set_object.set_id   # This is really only needed for testing, makes no difference to the end answer
-#         set_percent_match = set_object.percent_match
-#         set_difference = cutoff - set_percent_match
-#         set_movable = 
+    for row in item_table:
+        if row[4] == 1:
+            item_table_movable.append(row)
 
+    ### Step 3: Rank order all the records by proximity to cutoff
+    item_table_sort1 = sorted(item_table_movable, key=itemgetter(3))
 
+    """ Here is where we could refine: Sort them on something else, since the top ~20 records are indistinguishable right now """
 
-#         for item_id in set_object.items_missing:
-#             set_id = set_object
+    ### Step 4: Select the top 8, accounting for dups
 
+    """ Another place to refine. Should choose items from different sets."""
+    """Because if you choose all 3 items from the closest matched set, it will still only bump one set over the cutoff."""
 
+    result = []
+    result_keys_only = []
+    index = 0
 
+    while True:
 
+        if len(result) == 8:
+            break
 
-#             suggested_item = Item(item_id)
-#             item_table.append(suggested_item)
+        else:
+            item_id = item_table_sort1[index][0]
 
-#     print item_table
-#     print len(item_table)
+            if not item_id in result_keys_only:
+                suggested_item = Item(item_id)
+                result.append(suggested_item)
+                result_keys_only.append(item_id)
 
-#     # Create a table out of all the results
-#     #   column 1 = item_id
-#     #   column 2 = the set to which it belongs, what is the percent? how far away from the cutoff is it?
-#     # Create another table out of this
-#     #   column 1 = item_id
-#     #   column 2 = how many times does this item_id occur? i.e. does this item_id push multiple sets over the cutoff?
+            index += 1
 
-#     # pick 8 or 16 items to continue
+    # Step 5: Format list and return. Make sure you always pass it a list of 4*n entries!
+    formatted_result = format_list(None, result)   # Pass it dummy variable for db since we don't need it, Python won't check type
 
-#     #### Format the result in the groupings of 4
-#     #### Remember ALWAYS pass it 4*n number of items, to avoid pulling random extra items to make up the difference
-#     """
-#     just_100 = []
-#     for index in range(0, 100):
-#         just_100.append(result[index])
-
-#     formatted_result = format_list(None, just_100)  # Pass it dummy variable for db since we don't need it, Python won't check type
-#     """
-
-#     #return formatted_result
+    return formatted_result
 
 
-# Testing for the get_suggested_items function
+# Testing for the get_suggested_items function -- works in Python!
 def test3():
 
     db = connect_db()
@@ -588,17 +589,9 @@ def test3():
     all_potential_sets_test = all_potential_sets(db, selected_inventory_test)
     matching_sets = return_matching_sets(db, all_potential_sets_test)
 
-    # print "all potential --> " + str(len(all_potential_sets_test))
-    # print "all matching --> " + str(len(matching_sets))
+    suggested_items = get_suggested_items(all_potential_sets_test, 50.0)
 
-    # for entry in all_potential_sets_test.iteritems():
-    #     print entry
-
-    suggested_items = get_suggested_items(all_potential_sets_test, 50)
-
-    # print "num of groups (each one has 4 objects) --> " + str(len(suggested_items))
-    # for group in suggested_items:
-    #     print group
+    print suggested_items
 
 
 def return_updated_sets(all_potential_sets, list_of_new_items):

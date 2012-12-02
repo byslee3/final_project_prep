@@ -159,7 +159,7 @@ def combinations():
 
         MATCHING_SETS = engine2.return_matching_sets(g.db, ALL_POTENTIAL_SETS)
 
-        potential_items = engine2.get_suggested_items(ALL_POTENTIAL_SETS)
+        potential_items = engine2.get_suggested_items(ALL_POTENTIAL_SETS, 50.0)
 
         matching_sets_list = []
         for key, set_obj in MATCHING_SETS.iteritems():
@@ -189,7 +189,7 @@ def combinations():
 
         HYPOTHETICAL_MATCHING_SETS = engine2.return_sets_above_cutoff(ALL_POTENTIAL_SETS, 50)
 
-        potential_items = engine2.get_suggested_items(ALL_POTENTIAL_SETS)
+        potential_items = engine2.get_suggested_items(ALL_POTENTIAL_SETS, 50.0)
 
         matching_sets_list = []
         for key, set_obj in HYPOTHETICAL_MATCHING_SETS.iteritems():

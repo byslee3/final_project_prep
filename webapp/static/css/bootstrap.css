@@ -67,6 +67,10 @@
   margin-bottom: 10px;
 }
 
+#my-larger-text{
+  font-size: 120%;
+  font-weight: bold;
+}
 
 
 /*These are also specified elsewhere in bootstrap default. Put borders for testing purposes.*/

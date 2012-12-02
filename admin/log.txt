@@ -202,13 +202,13 @@ Learning: Always just do the minimum necessary, instead of investing a lot of ti
 
 Tuesday - Nov 27
 
-* Finish writing Python interface for matching sets
+* Finish writing algorithm & Python interface for matching sets
 
 =============================
 
 Wednesday - Nov 28 - Only had about 2 hours
 
-* Write the part where they can choose additional items and see how that changes the available sets
+* Wrote the part where they can choose additional items and see how that changes the available sets
 
 =============================
 
@@ -242,21 +242,19 @@ Saturday - Dec 1
 Sunday - Dec 2
 
 * Fixed the UI throughout. Sets page now looks much better. Writing this text is fun.
+* YES! Finished a rudimentary version of algorithm for picking Suggested Items. This turned out to be more involved than I thought originally, and still needs a lot of refining.
 
 
 
 
 
+NOW
+* Add set imgurl to all the Set Objects
+* Add item imgurl to all Items
+* Get all the image tags working
+* Size the images appropriately
 
 
-
-
-
-
-
-DO NOW
-
-* Refine the process for "Suggested Items" (or just pick 8 as a placeholder)
 
 
 
@@ -270,22 +268,13 @@ DO NOW
 
 =============================
 Next things to do
-* Add set imgurl whenever a Set Object is created
-* Link up the img urls from database for Items
-* Get all the image tags working
 * Image for start page
 * Colors and graphics throughout
 * Read through the Flask documentation
 =============================
 Monday
-* Refine the process for "Suggested Items"
 * Clean the database
 * Make the Sets page into a carousel
-
-
-
-
-
 
 =============================================
 =============== Next Stage ==================
@@ -298,8 +287,6 @@ Finish in future:
      That way we can be sure of having a starter group of items that works
 ---> Start on data mining
 
-
-
 =============================================
 =============== Summarized ==================
 =============================================
@@ -310,8 +297,6 @@ Reconstruct the Polyvore database
 --- Write script to parse JSON text files, pull out the data we need, and stick it in a database
 --- Create database schema and populate the database
 --- Clean data and debug processes
-
-
 
 =============================================
 =============== Challenges ==================
@@ -337,21 +322,8 @@ Reconstruct the Polyvore database
     And also how long it took to pull the data originally.
     And then it turned out the user behavior was not like I wanted.
     And I had to re-pull the data.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+* "Suggested Items" algorithm: way more complicated than I thought!
+* Pulling in the image url for an Item -- where to do this? Need a way of batch processing b/c I don't want to query the db that much
 
 
 
