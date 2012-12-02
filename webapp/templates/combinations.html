@@ -1,79 +1,81 @@
 {% extends "layout.html" %}
 {% block body %}
 
+    <div class = "my-heading">
+        Why don't you try one of these?
+    </div>
 
-<br>
-<br>
+    <div class = "my-explanation">
+        you can currently access {{ existing_sets|length }} combinations
+    </div>
 
-<a href = "{{  url_for("clear_hypotheticals")  }}">clear hypothetical selections and return to original closet</a>
-
-<br>
-<br>
-This is the selected inventory. <br>
-
-{#
-
-    {% for item in selected_inventory %}
-        <ul><li>
-            {{ item.item_id }}
-        </ul></li>
-    {% endfor %}
-<br>
-<br>
-
-#}
-
-
-Testing things:
-Which_run = {{ which_run }}
-<br>
-<br>
-In total, there are {{ all_potential_sets|length }} combinations that you would be able to access.
-
-<br>
-<br>
-
-You can currently access {{ existing_sets|length }} combinations.
 
     {% for set in existing_sets %}
-        <ul><li>
+        <div class = "my-set">
             {{ set.set_id }}
-        </ul></li>
+        </div>
     {% endfor %}
 
-<br>
-<br>
-For testing purposes:
+                                    {# JINJA BLOCK COMMENT. PREVIOUSLY USED FOR TESTING.
 
-    <ul>
-    {% for set in existing_sets %}
-        <li> {{ set }} : {{ set.set_id }} <br>
-            <ul>
-                <li>
-                    Matching items: 
-                        {% for item in set.items_matching %}
-                            {{ item }},
-                        {% endfor %}
-                </li>
-                <li>
-                    Missing items:
-                        {% for item in set.items_missing %}
-                            {{ item }},
-                        {% endfor %}
-                </li>
-                <li> Total items: {{ set.total_items }} </li>
-                <li> Percent match: {{ set.percent_match }} </li>
-            </ul>
-        </li>
-    <br>
-    {% endfor %}
-    </ul>
+                                        {% for item in selected_inventory %}
+                                            <ul><li>
+                                                {{ item.item_id }}
+                                            </ul></li>
+                                        {% endfor %}
+                                    <br>
+                                    <br>
+
+                                    Testing things:
+                                    Which_run = {{ which_run }}
+                                    <br>
+                                    <br>
+                                    In total, there are {{ all_potential_sets|length }} combinations that you would be able to access.
+
+                                    <br>
+                                    <br>
+
+                                    <br>
+                                    <br>
+                                    For testing purposes:
+
+                                        <ul>
+                                        {% for set in existing_sets %}
+                                            <li> {{ set }} : {{ set.set_id }} <br>
+                                                <ul>
+                                                    <li>
+                                                        Matching items: 
+                                                            {% for item in set.items_matching %}
+                                                                {{ item }},
+                                                            {% endfor %}
+                                                    </li>
+                                                    <li>
+                                                        Missing items:
+                                                            {% for item in set.items_missing %}
+                                                                {{ item }},
+                                                            {% endfor %}
+                                                    </li>
+                                                    <li> Total items: {{ set.total_items }} </li>
+                                                    <li> Percent match: {{ set.percent_match }} </li>
+                                                </ul>
+                                            </li>
+                                        <br>
+                                        {% endfor %}
+                                        </ul>
+
+                                    END OF JINJA BLOCK COMMENT #}
 
 
-<br>
-<br>
-These are the potential new items.
-<br>
+    <div class = "my-heading">
+        Expand your reach
+    </div>
+
+    <div class = "my-explanation">
+        who says shopping can't be a science? <br>
+        pick one of the following items and see how it expands your available outfits
+    </div>
+
+
 
     <form action = "{{  url_for("combinations")  }}" method = "POST">
 
@@ -90,6 +92,13 @@ These are the potential new items.
             </ul>
 
     </form>
+
+
+    <div class="my-footer">
+        <a href = "{{  url_for("clear_hypotheticals")  }}">return to original results</a> | 
+        <a href = "{{  url_for("clear_inventory")  }}">start over from beginning</a>
+    </div>
+
 
 {% endblock %}
 

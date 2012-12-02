@@ -35,7 +35,8 @@ def teardown_request(exception):
 """ Is there a way to get data from webpage without using these? """
 """ Or, to have these global variables, but associated with a specific session """
 
-SELECTED_INVENTORY = []
+SELECTED_INVENTORY = []        # List of item objects
+SELECTED_INVENTORY_KEYS = []   # List of item_ids only for quick comparison and indexing
 MATCHING_SETS = {}
 INITIAL_COMBOS = True
 HYPOTHETICAL_MATCHING_SETS = {}
@@ -58,12 +59,14 @@ def start():
 def clear_inventory():
 
     global SELECTED_INVENTORY
+    global SELECTED_INVENTORY_KEYS
     global MATCHING_SETS
     global INITIAL_COMBOS
     global HYPOTHETICAL_MATCHING_SETS
     global ALL_POTENTIAL_SETS
 
     SELECTED_INVENTORY = []
+    SELECTED_INVENTORY_KEYS = []
     MATCHING_SETS = {}
     INITIAL_COMBOS = True
     HYPOTHETICAL_MATCHING_SETS = {}
@@ -76,12 +79,10 @@ def clear_inventory():
 def inventory():
 
     starting_inventory = engine2.get_starting_items(g.db)
-    name = request.form['user_name']
     initial_round = True
 
     return render_template("inventory.html", 
-        potential_inventory = starting_inventory, 
-        name = name, 
+        potential_inventory = starting_inventory,
         initial_round=True)
 
 
@@ -89,15 +90,27 @@ def inventory():
 def next_inventory():
 
     global SELECTED_INVENTORY
+    global SELECTED_INVENTORY_KEYS
 
-    if len(SELECTED_INVENTORY) < 19:
+    # Enter this round's selection into the SELECTED_INVENTORY
+    this_round_selection = request.form.keys()
+    SELECTED_INVENTORY_KEYS.extend(this_round_selection)
 
-        # Enter this round's selection into the SELECTED_INVENTORY
-        this_round_selection = request.form.keys()
-        SELECTED_INVENTORY.extend(this_round_selection) """Don't just extend --> need to make these objects"""
+    for item_id in this_round_selection:
+        item_object = engine2.Item(item_id)
+        SELECTED_INVENTORY.append(item_object)
+
+    print " "
+    print "***********************"
+    for counter, obj in enumerate(SELECTED_INVENTORY):
+        print str(counter) + ". " + obj.item_id
+    print "***********************"
+    print " "
+
+    if len(SELECTED_INVENTORY) < 19:        
 
         # Get the next round of potential inventory and render template
-        next_inventory = engine2.get_next_items(g.db, this_round_selection, SELECTED_INVENTORY)
+        next_inventory = engine2.get_next_items(g.db, this_round_selection, SELECTED_INVENTORY_KEYS)
 
         return render_template("inventory.html",
             potential_inventory = next_inventory,
@@ -116,6 +129,8 @@ def before_combinations():
 
     global SELECTED_INVENTORY
 
+    print SELECTED_INVENTORY
+
     return render_template("before_combinations.html", 
         selected_inventory = SELECTED_INVENTORY)
 
@@ -129,6 +144,7 @@ def combinations():
     if INITIAL_COMBOS:
 
         global SELECTED_INVENTORY
+        global SELECTED_INVENTORY_KEYS
         global MATCHING_SETS
         global HYPOTHETICAL_MATCHING_SETS
         global ALL_POTENTIAL_SETS
@@ -139,7 +155,7 @@ def combinations():
         # Get a list of potential items
         # Pass them to the render template
 
-        ALL_POTENTIAL_SETS = engine2.all_potential_sets(g.db, SELECTED_INVENTORY)
+        ALL_POTENTIAL_SETS = engine2.all_potential_sets(g.db, SELECTED_INVENTORY_KEYS)
 
         MATCHING_SETS = engine2.return_matching_sets(g.db, ALL_POTENTIAL_SETS)
 

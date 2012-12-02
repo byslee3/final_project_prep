@@ -2,20 +2,56 @@
 
 {% block body %}
 
-<br>
+	<div class = "my-heading">
+		Now what?
+	</div>
 
-Here are the items that you selected:
+	<div class = "my-explanation">
+	<div id = "my-transition-text">
+		when you wake up in the morning, we bet you always reach for the same old t-shirt and jeans. or maybe you search through the laundry basket in search of the first two items that are clean. those cropped sweatpants totally go with a plaid shirt, right? meanwhile, you're letting a crazy pair of vintage stacked-heel leopard booties gather dust in your closet because you haven't figured out "the right way to wear them" yet.
+		<br>
+		<br>
+		stop doing that.
+		<br>
+		<br>
+		look at all the awesome stuff you own. if only you knew how to put it all together.
+	</div>
+	</div>
 
-<br>
-    {% for item in selected_inventory %}
-        <ul><li>
-        {{ item.item_id }}
-        </ul></li>
-    {% endfor %}
+	<div class = "row-fluid">
+		<div class = "span3">
+			{{ selected_inventory[0].item_id }}
+		</div>
+		<div class = "span3">
+			{{ selected_inventory[1].item_id }}
+		</div>
+		<div class = "span3">
+			{{ selected_inventory[2].item_id }}
+		</div>
+		<div class = "span3">
+			{{ selected_inventory[3].item_id }}
+		</div>
+	</div>
 
-<br>
-Ready to see your set combinations? 
 
-<a href = "{{  url_for("combinations")  }}">Yes</a>
+							{# JINJA BLOCK COMMENT
+							Here are the items that you selected:
+
+							<br>
+							<ol>
+							    {% for item in selected_inventory %}
+							        <li>
+							        {{ item.item_id }}
+							        </li>
+							    {% endfor %}
+							</ol>
+							<br>
+							#}
+
+
+    <div class="my-footer">
+        <a href = "{{  url_for("combinations")  }}">ready to get inspired?</a>
+    </div>
+
 
 {% endblock %}

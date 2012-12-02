@@ -227,8 +227,8 @@ def get_next_items(db, this_round_selection, selected_inventory):
 
             # Check first to see if it's already been selected
             if not item_id in selected_inventory:
-                item = Item(item_id)
-                result.append(item)
+                item_object = Item(item_id)
+                result.append(item_object)
 
         formatted_result = format_list(db, result)
 
@@ -342,17 +342,12 @@ def return_sets_above_cutoff(set_dictionary, cutoff):
 
 # Step X: Get all of the potential matching sets, not just the ones above cutoff
 # We'll need this later for getting the suggested items
-def all_potential_sets(db, selected_inventory_objects):
+def all_potential_sets(db, selected_inventory):
 
     """
     Returns a dictionary with each entry as:
     { set_id: set_object }
     """
-
-    # Get the item_ids out of selected_inventory_objects
-    selected_inventory = []
-    for item_obj in selected_inventory_objects:
-        selected_inventory.append(item_obj.item_id)
 
     # Get subset of records for this analysis
     subset = get_subset_all_items(db, selected_inventory)
@@ -416,6 +411,15 @@ def get_suggested_items(all_potential_sets):
 
     for key, set_object in all_potential_sets.iteritems():
         result.extend(set_object.items_missing)
+
+    # Create a table out of all the results
+    #   column 1 = item_id
+    #   column 2 = the set to which it belongs, what is the percent? how far away from the cutoff is it?
+    # Create another table out of this
+    #   column 1 = item_id
+    #   column 2 = how many times does this item_id occur? i.e. does this item_id push multiple sets over the cutoff?
+
+    # pick 8 or 16 items to continue
 
     return result
 

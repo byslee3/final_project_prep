@@ -231,31 +231,49 @@ Friday - Nov 30
 
 Saturday - Dec 1
 
-start doing some basic things in bootstrap to get comfortable with it
-
-
-
-
-
-=============================
-Finish by Monday:
----> Refine the process for "Suggested Items"
----> Figure out how to make the pictures show up
----> Make it look good using Bootstrap
----> If time, figure out how to host it
+* Start doing some stuff in bootstrap
+* Wrote functions to make 4-item grid structure work
+* Added Item class definition
+* Fixed a bug that I couldn't identify before! With the program still looping when len(selected_inventory) > 20
+* More stuff in bootstrap
 
 =============================
+
+Next things to do
+
+* Refine the process for "Suggested Items" (or just pick 8 as a placeholder)
+* Implement Bootstrap on the Sets result page --> Figure out the correct UI
+* Add set imgurl whenever a Set Object is created
+* Link up the img urls from database for Items
+* Get all the image tags working
+* Image for start page
+* Colors and graphics throughout
+* (I should make the sets into thumbnails and link to the larger versions on Polyvore?)
+* (Or maybe make the sets results page into 2 columns?)
+
+   
+=============================
+
+Monday
+
+* Refine the process for "Suggested Items"
+* Clean the database
+
+
+
+
+
+
+=============================================
+=============== Next Stage ==================
+=============================================
+
 Finish in future:
+---> Figure out how to host this thing
+---> Optimizing for speed. Don't query the database a lot.
 ---> Pull more data *** When re-pulling this data start from 100 items that I think are staples
      That way we can be sure of having a starter group of items that works
 ---> Start on data mining
-
-
-
-
-
-
-
 
 
 

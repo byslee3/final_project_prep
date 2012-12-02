@@ -11,12 +11,6 @@
 
 /********************** Stuff I added *********************/
 
-.container{
-  border: 1px solid #ff0000;
-  padding: 10px;
-  margin-top: 50px;
-  margin-bottom: 50px;
-}
 
 .my-heading{
   color: red;
@@ -37,6 +31,12 @@
   padding: 5px;
 }
 
+#my-transition-text{
+  margin-top: 20px;
+  padding-left: 70px;
+  padding-right: 70px;
+}
+
 .my-button{
   border: 1px solid lightgray;
   width: 70px;
@@ -52,7 +52,31 @@
 }
 
 
-/*put borders for testing purposes*/
+#my-start-image{
+  border: 1px solid lightgray;
+  width: 500px;
+  margin: auto;
+}
+
+.my-set{
+  border: 1px solid red;
+  width: 300px;
+  height: 400px;
+  margin: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+
+
+/*These are also specified elsewhere in bootstrap default. Put borders for testing purposes.*/
+
+.container{
+  border: 1px solid #ff0000;
+  padding: 10px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
 
 .row-fluid{
   border: 1px solid green;
@@ -64,10 +88,6 @@
   border: 1px solid red;
   text-align: center;
   height: 100%;
-}
-
-.span6{
-  border: 1px solid red;
 }
 
 
