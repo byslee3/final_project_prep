@@ -94,7 +94,7 @@ def next_inventory():
 
         # Enter this round's selection into the SELECTED_INVENTORY
         this_round_selection = request.form.keys()
-        SELECTED_INVENTORY.extend(this_round_selection)
+        SELECTED_INVENTORY.extend(this_round_selection) """Don't just extend --> need to make these objects"""
 
         # Get the next round of potential inventory and render template
         next_inventory = engine2.get_next_items(g.db, this_round_selection, SELECTED_INVENTORY)

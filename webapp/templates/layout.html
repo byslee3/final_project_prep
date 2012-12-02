@@ -5,7 +5,7 @@
 
     <head>
         <title>Proteus: Fashion Amoeba</title>
-        <!-- <link rel = "stylesheet" href = "/static/css/bootstrap.css" type = "text/css"> -->
+        <link href="static/css/bootstrap.css" type="text/css" rel="stylesheet" media="screen">
 
         {% block head %}
         {% endblock %}
@@ -22,11 +22,14 @@
             {% endif %}
         {% endwith %}
 
-        <a href = "{{  url_for("clear_inventory")  }}">clear inventory and start over</a>
 
-        {% block body %}
-        {% endblock %}
 
+        <div class="container">
+
+            {% block body %}
+            {% endblock %}
+
+        </div>
 
 
     </body>

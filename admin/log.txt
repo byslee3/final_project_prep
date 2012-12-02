@@ -227,7 +227,11 @@ Friday - Nov 30
 
 * Added feature to clear the hypothetical selections and start over from your declared inventory
 
-* Need to refine the "suggested items" so it's not such a long list
+=============================
+
+Saturday - Dec 1
+
+start doing some basic things in bootstrap to get comfortable with it
 
 
 
@@ -238,7 +242,7 @@ Finish by Monday:
 ---> Refine the process for "Suggested Items"
 ---> Figure out how to make the pictures show up
 ---> Make it look good using Bootstrap
----> Get it working on my laptop or figure out how to host it
+---> If time, figure out how to host it
 
 =============================
 Finish in future:
@@ -265,3 +269,49 @@ Reconstruct the Polyvore database
 --- Write script to parse JSON text files, pull out the data we need, and stick it in a database
 --- Create database schema and populate the database
 --- Clean data and debug processes
+
+
+
+=============================================
+=============== Challenges ==================
+=============================================
+
+* More and more problems unfolding -- grid structure
+    For example, needed to pull in groups of 8 to make it work within the grid structure
+    Needed to format them into groups
+        Then what happens if you have something that's not a multiple of 8?
+            Then you have to pull extra items to make up the difference
+                But then you also have to check against the existing items you have
+                    And then you have to format the images so they fit correctly
+* Getting random items --> this is a place I could optimize later
+    Should I query the database and get all the distinct ids? (long runtime)
+    Or should I get a random number first and just pull those that match? But we don't know the population set of the item_ids
+* Coming up with a file directory system when pulling from Polyvore
+    Since each folder on the desktop can only store 30K files
+    Using the last digit of each id to randomly distribute files into folders
+* Picking the suggested items --> will need to think about how to optimize for runtime
+* The algorithm for matching sets --> also think about runtime implications
+* Each step unfolds to more steps
+    Like the first example above.
+    And also how long it took to pull the data originally.
+    And then it turned out the user behavior was not like I wanted.
+    And I had to re-pull the data.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

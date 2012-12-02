@@ -25,6 +25,12 @@ class Set(object):
             self.percent_match = round(len(self.items_matching) / self.total_items * 100, 1)
 
 
+class Item(object):
+
+    def __init__(self, item_id):
+        self.item_id = item_id
+        self.imgurl = None
+
 ##############################################################################
 ######################### Inventory Selection ################################
 ##############################################################################
@@ -35,11 +41,130 @@ def connect_db():
     return db
 
 
+def get_random_items(db, num_to_get, items_already_selected=[]):
+    """
+    Pull X items at random from database
+    Make sure they're not items you already pulled
+    num_to_get needs to be at least 1
+    items_already_selected is a list of item_ids
+    Return a list of item objects
+    """
+
+    # Get list of unique items
+    # Modify the query so that it DOESN'T select any items that have already been selected
+    """ NEED TO FIX THIS PART LATER """
+    query = """SELECT DISTINCT item_id FROM Test"""
+    cursor = db.execute(query)
+    unique_item_list = [  row[0] for row in cursor.fetchall()  ]
+
+    # Select X of those items at random
+    result = []
+    random_items = random.sample(unique_item_list, num_to_get)
+
+    for item_id in random_items:
+        item = Item(item_id)
+        result.append(item)
+
+    return result
+
+
+def test1():
+
+    db = connect_db()
+
+    # This one should return any number in test version where unique_item_list = ["333", "222", "555", "111"] (won't work after I update the function)
+    # answer = get_random_items(db, 1)
+
+    # This one should return only ["111"]
+    #answer = get_random_items(db, 1, ["333", "222", "555"])
+
+    # This one should return any 2 items
+    answer = get_random_items(db, 5)
+
+    print answer
+
+    print "*******"
+
+    for item_obj in answer:
+        print item_obj.item_id
+
+
+
+def format_list(db, item_list):
+
+    """
+    Format a list of item objects into groups of 4
+    Needed for the grid structure of the html layout
+    Takes item_list = [obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8]
+    Returns a list of item objects in this format: list = [[obj1, obj2, obj3, obj4], [obj5, obj6 obj7, obj8]]
+    If the item_list is not a multiple of 4, this function will pull extra random items to make up the difference
+    """
+
+    # See if we need to get additional items
+    remainder = len(item_list) % 4
+
+    if remainder > 0 or len(item_list)==0:
+        num_to_get = 4 - remainder
+        addition = get_random_items(db, num_to_get)
+        item_list.extend(addition)
+
+    # Now that the list is a multiple of 4, group it into the appropriate format
+    num_groups = len(item_list) / 4
+
+    formatted_list = []
+
+    for num in range(0, num_groups):
+        group = [None, None, None, None]
+        group[0] = item_list[0 + num*4]
+        group[1] = item_list[1 + num*4]
+        group[2] = item_list[2 + num*4]
+        group[3] = item_list[3 + num*4]
+        formatted_list.append(group)
+
+    return formatted_list
+
+# Unit test for format_list function. It works!
+def test2():
+    db = connect_db()
+
+    list1 = [1, 2, 3, 4, 5, 6, 7, 8]
+    format_list(db, list1)
+
+    print "***********************"
+
+    list2 = [1, 2, 3, 4, 5, 6, 7]
+    format_list(db, list2)
+
+    print "***********************"
+
+    list3 = [1, 2, 3, 4, 5]
+    format_list(db, list3)
+
+    print "***********************"
+
+    list4 = [1, 2, 3, 4]
+    format_list(db, list4)
+
+    print "**********************"
+
+    list5 = [1, 2, 3]
+    format_list(db, list5)
+
+    print "**********************"
+
+    list6 = [1]
+    format_list(db, list6)
+
+    print "**********************"
+
+    list7 = []
+    format_list(db, list7)
+
 # This works
 def get_starting_items(db):
 
     """
-    Return a list of dictionaries
+    Return a list of item objects
     """
 
     # Get list of unique items
@@ -47,25 +172,26 @@ def get_starting_items(db):
     cursor = db.execute(query)
     unique_item_list = [  row[0] for row in cursor.fetchall()  ]
 
-    # Select 5 of those items at random
-    random_items = random.sample(unique_item_list, 5)
+    # Select 8 of those items at random (to fit with grid structure of html layout)
+    random_items = random.sample(unique_item_list, 8)
 
-    # Store in a dictionary to pass to web interface
+    # Create list of Item objects
     # ---> Build this out later with additional attributes
     result = []
 
     for item_id in random_items:
-        d = {}
-        d["item_id"] = item_id
-        result.append(d)
+        item = Item(item_id)
+        result.append(item)
 
-    return result
+    formatted_result = format_list(db, result)
+
+    return formatted_result
 
 
 def get_next_items(db, this_round_selection, selected_inventory):
 
     """
-    Return a list of dictionaries
+    Return a list of item objects
     """
 
     # If this_round_selection is blank, i.e. user selected only dups
@@ -93,7 +219,7 @@ def get_next_items(db, this_round_selection, selected_inventory):
         cursor_2 = db.execute(query_2, tuple(resulting_sets))
         resulting_items = [  row[0] for row in cursor_2.fetchall()  ]
 
-        # Store in a dictionary to pass to web interface
+        # List of item objects
         # ---> Build this out later with additional attributes
         result = []
 
@@ -101,11 +227,12 @@ def get_next_items(db, this_round_selection, selected_inventory):
 
             # Check first to see if it's already been selected
             if not item_id in selected_inventory:
-                d = {}
-                d["item_id"] = item_id
-                result.append(d)
+                item = Item(item_id)
+                result.append(item)
 
-        return result
+        formatted_result = format_list(db, result)
+
+        return formatted_result
 
 
 ##############################################################################
@@ -120,11 +247,12 @@ def get_next_items(db, this_round_selection, selected_inventory):
 def get_subset_matching_items(db, selected_inventory):
 
     """
-    selected_inventory = a list of item_ids that the user selected
+    selected_inventory = a list of item_ids
     result = returns a list of set_ids that contain those items
     will be called by another function
     """
 
+    # Database query
     query_template = """SELECT * FROM Test WHERE item_id IN (%s)"""
     q_marks_string = ", ".join(["?"] * len(selected_inventory))
     query = query_template % q_marks_string
@@ -214,12 +342,18 @@ def return_sets_above_cutoff(set_dictionary, cutoff):
 
 # Step X: Get all of the potential matching sets, not just the ones above cutoff
 # We'll need this later for getting the suggested items
-def all_potential_sets(db, selected_inventory):
+def all_potential_sets(db, selected_inventory_objects):
 
     """
     Returns a dictionary with each entry as:
     { set_id: set_object }
     """
+
+    # Get the item_ids out of selected_inventory_objects
+    selected_inventory = []
+    for item_obj in selected_inventory_objects:
+        selected_inventory.append(item_obj.item_id)
+
     # Get subset of records for this analysis
     subset = get_subset_all_items(db, selected_inventory)
 
