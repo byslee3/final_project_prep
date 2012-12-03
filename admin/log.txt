@@ -242,50 +242,71 @@ Saturday - Dec 1
 Sunday - Dec 2
 
 * Fixed the UI throughout. Sets page now looks much better. Writing this text is fun.
-* YES! Finished a rudimentary version of algorithm for picking Suggested Items. This turned out to be more involved than I thought originally, and still needs a lot of refining.
-
-
-
-
-
-NOW
-* Add set imgurl to all the Set Objects
-* Add item imgurl to all Items
-* Get all the image tags working
-* Size the images appropriately
-
-
-
-
-
-
-
-
-
-
-
-
+* YES! Finished a rudimentary version of algorithm for picking Suggested Items. This turned out to be way more involved/complicated than I thought originally, and still needs a lot of refining.
+* Added imgurl attributes throughout (to both Set and Item objects). Running so slow AAAAAAAAARGH. --> Should be better once I get the database set up properly so it doesn't need to be joined. Remember to index on more columns!!!
+* Fixed a bug in the Suggested Items algorithm -- accounting for if there are < 8 suggested items that occur naturally. Picking random items for now, although I should pick from the rest of the sorted_item_table that didn't make the cut.
+* Got all the image tags working and sized appropriately. It looks awesome!
+* Found an annoying bug in the Matching Sets algorithm ---> NEED TO FIX THIS LATER
+        SOLVE THIS RANDOM PROBLEM
+            Items in each Set: The match appears to be low. For example, Set will show 7 items and only 2 of them are something the user selected. Yet, the Set shows up as matching. Why?
+            The set object is being created correctly.
+            The missing and matching items are being compared correctly.
+            The information was pulled from the database correctly.
+            The problem starts with the database record. The set shows 7 items, however the database only has records for 4 items in the Items_Sets table. Will have to look further at the JSON file to determine why it doesn't show records for all the items.
 
 =============================
-Next things to do
-* Image for start page
-* Colors and graphics throughout
-* Read through the Flask documentation
-=============================
-Monday
-* Clean the database
-* Make the Sets page into a carousel
+
+Monday - Dec 3
+
+1. Put nice colors and graphics throughout
+2. Inevitable debugging
+        Quick fix for the Sets matching: make the cutoff more stringent
+3. Cool image for the start page
+-------------------------------------------------------------------------------
+4. Read through Flask documentation / make Sets page into carousel / do nothing
+5. Write blog post sometime
+
+
+
+
+
 
 =============================================
-=============== Next Stage ==================
+================ Learnings ==================
 =============================================
 
-Finish in future:
----> Figure out how to host this thing
----> Optimizing for speed. Don't query the database a lot.
----> Pull more data *** When re-pulling this data start from 100 items that I think are staples
-     That way we can be sure of having a starter group of items that works
----> Start on data mining
+1. I spent too much time on pulling data upfront. Should have started with small test sample instead of getting it "perfect" all at once, especially because I ended up throwing out a lot of data later as my needs evolved.
+2. Design of UX/Product/What should it do? is actually important and I had to rewrite code as ideas evolved later on.
+3. Real-world data is not perfect. Even when the code itself worked perfectly, bad data or unexpected user behavior ended up breaking things.
+4. Things that are conceptually "easy" to understand, may be complicated in terms of execution. See: suggested items algorithm. Even when you start with a seemingly simple idea, it quickly unfolds into millions of smaller problems.
+5. "Keep it simple, then expand." I had a lot of trouble accepting this. I kept wanting to do things that were really difficult and ambitious right off the bat, then getting frustrated when I encountered roadblocks (mainly because I wasn't ready yet, or didn't have enough experience or knowledge). Whether it's writing a function, solving for an algorithm, or building out the UI, always start with something simple that you know works. Not everything needs to be solved or implemented immediately.
+    Early example --> I kept trying to refactor/abstract code WHILE I was writing it, causing me a lot of headaches and confusion
+    Now --> Lots of places in my code where I put "FIX THIS LATER". Easier to solve things when you have some perspective & see the bigger pic
+
+=============================================
+=============== Next Steps ==================
+=============================================
+
+NOT OPTIONAL:
+    Re-construct a clean database. Start from 100 items that I think are staples, to get a solid starter group.
+    This will probably take a week anyway.
+
+OPTION 1:
+    Refine and fix algorithms --> making sure they work properly
+    Refine and fix algorithms --> optimize for speed. don't query the database a lot. deal with item imgurls.
+
+OPTION 2A:
+    Data mining --> targeted toward finding similarity of items
+    More refining of algorithms
+
+OPTION 2B:
+    Data mining --> random
+
+OPTION 3:
+    Figure out how to host this --> Really want to do this
+    Add threading and ability to create user accounts. Currently everything relies on global variables.
+    Implement JavaScript and refine UI
+    Make the Sets page into a carousel
 
 =============================================
 =============== Summarized ==================
@@ -324,6 +345,7 @@ Reconstruct the Polyvore database
     And I had to re-pull the data.
 * "Suggested Items" algorithm: way more complicated than I thought!
 * Pulling in the image url for an Item -- where to do this? Need a way of batch processing b/c I don't want to query the db that much
+
 
 
 

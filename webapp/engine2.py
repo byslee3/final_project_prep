@@ -9,8 +9,9 @@ from operator import itemgetter
 
 class Set(object):
 
-    def __init__(self, set_id):
+    def __init__(self, set_id, imgurl=None):
         self.set_id = set_id
+        self.imgurl = imgurl
         self.items_matching = []
         self.items_missing = []
         self.total_items = None
@@ -28,9 +29,37 @@ class Set(object):
 
 class Item(object):
 
-    def __init__(self, item_id):
+    def __init__(self, item_id, imgurl=None):
         self.item_id = item_id
-        self.imgurl = None
+        self.imgurl = imgurl
+
+    def get_imgurl(self, db):
+        cur = db.cursor()
+        query = """SELECT imgurl FROM Items WHERE item_id = ?"""
+        query_result = cur.execute(query, (self.item_id,))
+        self.imgurl = cur.fetchone()[0]
+
+
+# If needs to be called from recommender.py --> Figure out later where to put this
+def create_entire_item(item_id, db):
+
+    new_item_object = Item(item_id)
+    new_item_object.get_imgurl(db)
+    return new_item_object
+
+# Testing if the get_imgurl function works
+def test6():
+
+    db = connect_db()
+
+    new_item = Item("60387619")
+
+    new_item.get_imgurl(db)
+
+    print new_item.item_id
+    print new_item.imgurl
+
+
 
 ##############################################################################
 ######################### Inventory Selection ################################
@@ -63,7 +92,8 @@ def get_random_items(db, num_to_get, items_already_selected=[]):
     random_items = random.sample(unique_item_list, num_to_get)
 
     for item_id in random_items:
-        item = Item(item_id)
+        item = Item(item_id)  
+        item.get_imgurl(db)   # Runtime: queries the database. Only < 4 items right now.
         result.append(item)
 
     return result
@@ -111,6 +141,17 @@ def format_list(db, item_list):
 
     # Now that the list is a multiple of 4, group it into the appropriate format
     num_groups = len(item_list) / 4
+
+    """
+    FIX THIS LATER
+    For now -- cap the num of items returned at 40, otherwise the runtime is too long G;LKAJERLAKEJRLKEJ
+    """
+    if num_groups > 10:
+        num_groups = 10
+
+    """
+    Take out everything between this and the last block comment
+    """
 
     formatted_list = []
 
@@ -161,14 +202,17 @@ def test2():
     list7 = []
     format_list(db, list7)
 
+
 # This works
 def get_starting_items(db):
+
 
     """
     Return a list of item objects
     """
 
     # Get list of unique items
+    # In the future, I should query from Items directly so that I don't have to join tables, it will be faster
     query = """SELECT DISTINCT item_id FROM Test"""
     cursor = db.execute(query)
     unique_item_list = [  row[0] for row in cursor.fetchall()  ]
@@ -182,6 +226,7 @@ def get_starting_items(db):
 
     for item_id in random_items:
         item = Item(item_id)
+        item.get_imgurl(db)   # Runtime: queries the database. Only 8 items for now.
         result.append(item)
 
     formatted_result = format_list(db, result)
@@ -229,6 +274,7 @@ def get_next_items(db, this_round_selection, selected_inventory):
             # Check first to see if it's already been selected
             if not item_id in selected_inventory:
                 item_object = Item(item_id)
+                item_object.get_imgurl(db)  # ---> FIX THIS --> Runtime: queries the database. Could be 100+ items. It's slowing down the webapp.
                 result.append(item_object)
 
         formatted_result = format_list(db, result)
@@ -293,11 +339,12 @@ def aggregate_into_sets(db, selected_inventory, subset):
 
         item_id = record[1]
         set_id = record[2]
+        set_imgurl = record[5]
 
         # If the set has not been recorded yet, create a new set object and store in dictionary
         if d.get(set_id) == None:
 
-            d[set_id] = Set(set_id)
+            d[set_id] = Set(set_id, set_imgurl)
 
             # Determine whether the item is a matching or missing item, and update the Set object accordingly
             if item_id in selected_inventory:
@@ -306,7 +353,7 @@ def aggregate_into_sets(db, selected_inventory, subset):
                 d[set_id].items_missing.append(item_id)
 
         else:
-            # Determine whether the item is a matching or missing item
+            # Determine whether the item is a matching or missing item, and update the Set object accordingly
             if item_id in selected_inventory:
                 d[set_id].items_matching.append(item_id)
             else:
@@ -509,7 +556,7 @@ def test5():
     print "length of table is %d items" % len(test_answer)
 
 
-def get_suggested_items(all_potential_sets, cutoff):
+def get_suggested_items(all_potential_sets, cutoff, db):
 
     """
     Takes in the following arguments:
@@ -556,9 +603,9 @@ def get_suggested_items(all_potential_sets, cutoff):
     result_keys_only = []
     index = 0
 
-    while True:
+    while index < len(item_table_sort1):  # Sometimes item_table_sort1 is very short and there aren't even 8 suggested items
 
-        if len(result) == 8:
+        if len(result) == 8:  # Max 8 spaces
             break
 
         else:
@@ -566,10 +613,17 @@ def get_suggested_items(all_potential_sets, cutoff):
 
             if not item_id in result_keys_only:
                 suggested_item = Item(item_id)
+                suggested_item.get_imgurl(db)  # Runtime: this queries the database. Only 8 times for now.
                 result.append(suggested_item)
                 result_keys_only.append(item_id)
 
             index += 1
+
+    # ----> Need to get some extra items if item_table_sort1 is not long enough
+    if len(result) < 8:
+        num_to_get = 8 - len(result)
+        additional_items = get_random_items(db, num_to_get)  # Returns a list of item objects
+        result.extend(additional_items)
 
     # Step 5: Format list and return. Make sure you always pass it a list of 4*n entries!
     formatted_result = format_list(None, result)   # Pass it dummy variable for db since we don't need it, Python won't check type
@@ -589,7 +643,7 @@ def test3():
     all_potential_sets_test = all_potential_sets(db, selected_inventory_test)
     matching_sets = return_matching_sets(db, all_potential_sets_test)
 
-    suggested_items = get_suggested_items(all_potential_sets_test, 50.0)
+    suggested_items = get_suggested_items(all_potential_sets_test, 50.0, db)
 
     print suggested_items
 

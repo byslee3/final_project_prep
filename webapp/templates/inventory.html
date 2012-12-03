@@ -1,22 +1,15 @@
 {% extends "layout.html" %}
 
 
-
-
-
 {% block head %}
-
     <script type = 'text/javascript'>
     </script>
-
-
 {% endblock %}
 
 
-
-
-
 {% block body %}
+
+    <!-- Heading -->
 
     {% if initial_round %}
 
@@ -40,36 +33,8 @@
 
     {% endif %}
 
-    <br>
-    <br>
-
-{#  JINJA BLOCK COMMENT. USED EARLIER FOR TESTING ONLY.
-
-    {% if not initial_round %}
-
-        Last time you chose: <br>
-
-        {% for item in this_round_selection %}
-            <ul><li>
-                {{ item }}
-            </li></ul>
-        {% endfor %}
-
-        <br>
-        Here is everything you've chosen so far:
-        <br>
-
-        <ol>
-        {% for item in total_inventory %}
-            <li> {{ item }} </li>
-        {% endfor %}
-        </ol>
-
-    {% endif %}
-
-    END OF JINJA BLOCK COMMENT.
-#}
-
+    
+    <!-- Grid of items to select -->
 
     <form action="{{  url_for("next_inventory")  }}" method="POST">
 
@@ -77,31 +42,36 @@
 
             <div class="row-fluid">
                 <div class = "span3">
-                    {{ group[0].item_id }}
+                    <img class = "my-item-image" src = "{{ group[0].imgurl }}">
+                    {{ group[0].imgurl }}
                     <input type="checkbox" name="{{ group[0].item_id }}" value=1>
                 </div>
                 <div class = "span3">
-                    {{ group[1].item_id }}
+                    <img class = "my-item-image" src = "{{ group[1].imgurl }}">
+                    {{ group[1].imgurl }}
                     <input type="checkbox" name="{{ group[1].item_id }}" value=1>
                 </div>
                 <div class = "span3">
-                    {{ group[2].item_id }}
+                    <img class = "my-item-image" src = "{{ group[2].imgurl }}">
+                    {{ group[2].imgurl }}
                     <input type="checkbox" name="{{ group[2].item_id }}" value=1>
                 </div>
                 <div class = "span3">
-                    {{ group[3].item_id }}
+                    <img class = "my-item-image" src = "{{ group[3].imgurl }}">
+                    {{ group[3].imgurl }}
                     <input type="checkbox" name="{{ group[3].item_id }}" value=1>
                 </div>
             </div>
 
         {% endfor %}
 
-        <div class="my-button">
-                <input type="submit" value="continue">
+        <div class="my-footer">
+                <input type="submit" value="continue" class = "my-button">
         </div>
 
     </form>
 
+    <!-- Footer -->
 
     <div class="my-footer">
         <a href = "{{  url_for("next_inventory")  }}">give me some different options</a> | 

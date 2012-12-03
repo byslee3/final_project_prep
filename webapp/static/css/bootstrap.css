@@ -38,10 +38,7 @@
 }
 
 .my-button{
-  border: 1px solid lightgray;
-  width: 70px;
   margin: auto;
-  margin-top: 20px;
 }
 
 .my-footer{
@@ -70,6 +67,11 @@
 #my-larger-text{
   font-size: 120%;
   font-weight: bold;
+}
+
+.my-item-image{
+  height: 150px;
+  overflow: hidden;
 }
 
 

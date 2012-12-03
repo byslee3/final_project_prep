@@ -1,6 +1,9 @@
 {% extends "layout.html" %}
 {% block body %}
 
+
+    <!-- Heading for Sets section -->
+
     {% if which_run == "initial" %}
 
         <div class = "my-heading">
@@ -25,65 +28,24 @@
     {% endif %}
 
 
+    <!-- Showing the sets -->
+
     {% for set in existing_sets %}
         <div class = "my-set">
-            {{ set.set_id }}
+            <img src = "{{ set.imgurl }}">
+            {{ set.imgurl }} <br>
+            Items matching: {{ set.items_matching }} <br>
+            Items missing: {{ set.items_missing }}
         </div>
     {% endfor %}
 
-                                    {# JINJA BLOCK COMMENT. PREVIOUSLY USED FOR TESTING.
 
-                                        {% for item in selected_inventory %}
-                                            <ul><li>
-                                                {{ item.item_id }}
-                                            </ul></li>
-                                        {% endfor %}
-                                    <br>
-                                    <br>
-
-                                    Testing things:
-                                    Which_run = {{ which_run }}
-                                    <br>
-                                    <br>
-                                    In total, there are {{ all_potential_sets|length }} combinations that you would be able to access.
-
-                                    <br>
-                                    <br>
-
-                                    <br>
-                                    <br>
-                                    For testing purposes:
-
-                                        <ul>
-                                        {% for set in existing_sets %}
-                                            <li> {{ set }} : {{ set.set_id }} <br>
-                                                <ul>
-                                                    <li>
-                                                        Matching items: 
-                                                            {% for item in set.items_matching %}
-                                                                {{ item }},
-                                                            {% endfor %}
-                                                    </li>
-                                                    <li>
-                                                        Missing items:
-                                                            {% for item in set.items_missing %}
-                                                                {{ item }},
-                                                            {% endfor %}
-                                                    </li>
-                                                    <li> Total items: {{ set.total_items }} </li>
-                                                    <li> Percent match: {{ set.percent_match }} </li>
-                                                </ul>
-                                            </li>
-                                        <br>
-                                        {% endfor %}
-                                        </ul>
-
-                                    END OF JINJA BLOCK COMMENT #}
+    <!-- Heading for the Suggested Items section -->
 
     {% if which_run == "initial" %}
 
         <div class = "my-heading">
-            But I want more
+            But I want more!
         </div>
 
         <div class = "my-explanation">
@@ -113,31 +75,36 @@
 
             <div class="row-fluid">
                 <div class = "span3">
-                    {{ group[0].item_id }}
+                    <img class = "my-item-image" src = "{{ group[0].imgurl }}">
+                    {{ group[0].imgurl }}
                     <input type="checkbox" name="{{ group[0].item_id }}" value=1>
                 </div>
                 <div class = "span3">
-                    {{ group[1].item_id }}
+                    <img class = "my-item-image" src = "{{ group[1].imgurl }}">
+                    {{ group[1].imgurl }}
                     <input type="checkbox" name="{{ group[1].item_id }}" value=1>
                 </div>
                 <div class = "span3">
-                    {{ group[2].item_id }}
+                    <img class = "my-item-image" src = "{{ group[2].imgurl }}">
+                    {{ group[2].imgurl }}
                     <input type="checkbox" name="{{ group[2].item_id }}" value=1>
                 </div>
                 <div class = "span3">
-                    {{ group[3].item_id }}
+                    <img class = "my-item-image" src = "{{ group[3].imgurl }}">
+                    {{ group[3].imgurl }}
                     <input type="checkbox" name="{{ group[3].item_id }}" value=1>
                 </div>
             </div>
 
         {% endfor %}
 
-        <div class="my-button">
-                <input type="submit" value="what happens if I add these?">
+        <div class="my-footer">
+                <input type="submit" value="what happens if I add these?" class = "my-button">
         </div>
 
     </form>
 
+    <!-- Footer at the bottom -->
 
     <div class="my-footer">
         <a href = "{{  url_for("clear_hypotheticals")  }}">return to original results</a> | 

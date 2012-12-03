@@ -97,7 +97,7 @@ def next_inventory():
     SELECTED_INVENTORY_KEYS.extend(this_round_selection)
 
     for item_id in this_round_selection:
-        item_object = engine2.Item(item_id)
+        item_object = engine2.create_entire_item(item_id, g.db)  # ---> More runtime debt AAAAAAAAARGH
         SELECTED_INVENTORY.append(item_object)
 
     print " "
@@ -159,11 +159,14 @@ def combinations():
 
         MATCHING_SETS = engine2.return_matching_sets(g.db, ALL_POTENTIAL_SETS)
 
-        potential_items = engine2.get_suggested_items(ALL_POTENTIAL_SETS, 50.0)
+
+        potential_items = engine2.get_suggested_items(ALL_POTENTIAL_SETS, 50.0, g.db)
+
 
         matching_sets_list = []
         for key, set_obj in MATCHING_SETS.iteritems():
             matching_sets_list.append(set_obj)
+
 
         return render_template("combinations.html",
             selected_inventory = SELECTED_INVENTORY,
@@ -189,11 +192,13 @@ def combinations():
 
         HYPOTHETICAL_MATCHING_SETS = engine2.return_sets_above_cutoff(ALL_POTENTIAL_SETS, 50)
 
-        potential_items = engine2.get_suggested_items(ALL_POTENTIAL_SETS, 50.0)
+
+        potential_items = engine2.get_suggested_items(ALL_POTENTIAL_SETS, 50.0, g.db)
 
         matching_sets_list = []
         for key, set_obj in HYPOTHETICAL_MATCHING_SETS.iteritems():
             matching_sets_list.append(set_obj)
+
 
         return render_template("combinations.html",
             selected_inventory = SELECTED_INVENTORY,
