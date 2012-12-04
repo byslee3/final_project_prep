@@ -418,7 +418,7 @@ def return_matching_sets(db, all_potential_sets):
     { set_id: set_object }
     """
 
-    cutoff_percent = 50
+    cutoff_percent = 50.0
 
     # Return sets above the cutoff
     final_matching = return_sets_above_cutoff(all_potential_sets, cutoff_percent)
@@ -471,7 +471,7 @@ def is_set_movable(set_object, cutoff):
 # Testing the is_set_movable function -- it works!
 def test4():
 
-    test_cutoff = 50
+    test_cutoff = 75.0
 
     a = Set("already matched")
     a.items_matching = [1, 2, 3]
@@ -542,13 +542,13 @@ def test5():
 
     db = connect_db()
     selected_inventory_test = ["60387619", "67807105", "31221171", "49922912",
-    "49881679", "37322442", "65354882", "57750497", "48899525", "55486970",
+    "49881679", "37322442", "65354882", "577750497", "48899525", "55486970",
     "34514286", "53078281", "56072045", "51474209", "31237490", "27930863",
     "66546372", "61086925", "61190827", "20772992", "63797724", "17719636",
     "56200379", "66804821"]
     all_potential_sets_test = all_potential_sets(db, selected_inventory_test)
 
-    test_answer = create_item_table(all_potential_sets_test, 50.0)
+    test_answer = create_item_table(all_potential_sets_test, 75.0)
 
     for row in test_answer:
         print row
@@ -561,7 +561,7 @@ def get_suggested_items(all_potential_sets, cutoff, db):
     """
     Takes in the following arguments:
         Pass in a dictionary of {set_id: set_object}
-        Pass in cutoff as a float, where 50% cutoff is passed in as 50.0
+        Pass in cutoff as a float, where 75.0% cutoff is passed in as 75.0
         Pass in items_already_selected, which is a list of item ids ["34234", "34559", "342098"]
     Pick the top 16 suggested items
     Return a list of item Objects, grouped into fours: [[obj1, obj2, obj3, obj4], [obj5, obj6, obj7, obj8]]
@@ -636,14 +636,14 @@ def test3():
 
     db = connect_db()
     selected_inventory_test = ["60387619", "67807105", "31221171", "49922912",
-    "49881679", "37322442", "65354882", "57750497", "48899525", "55486970",
+    "49881679", "37322442", "65354882", "577750497", "48899525", "55486970",
     "34514286", "53078281", "56072045", "51474209", "31237490", "27930863",
     "66546372", "61086925", "61190827", "20772992", "63797724", "17719636",
     "56200379", "66804821"]
     all_potential_sets_test = all_potential_sets(db, selected_inventory_test)
     matching_sets = return_matching_sets(db, all_potential_sets_test)
 
-    suggested_items = get_suggested_items(all_potential_sets_test, 50.0, db)
+    suggested_items = get_suggested_items(all_potential_sets_test, 75.0, db)
 
     print suggested_items
 
@@ -752,22 +752,22 @@ selected_inventory_test = ["68519560", "64888102",
 "67009179",
 "64181961",
 "65342355",
-"64108504",
+"641087504",
 "67244905",
 "65232087",
 "63396515",
 "67365763",
 "43907865",
-"59764503",
+"597647503",
 "31438308",
 "34129315",
-"15067690",
+"175067690",
 "29524227",
 "59704080",
 "46179180",
 "31432829",
 "59174684",
-"10485009",
+"104875009",
 "60055493",
 "59282239"]
 

@@ -33,8 +33,16 @@
 
     {% endif %}
 
-    
+    <!-- Line divider -->
+
+    <div class = "my-line-separator">
+        line
+    </div>
+    <br>
+
     <!-- Grid of items to select -->
+
+    <div class = "my-item-grid-container">
 
     <form action="{{  url_for("next_inventory")  }}" method="POST">
 
@@ -42,36 +50,42 @@
 
             <div class="row-fluid">
                 <div class = "span3">
-                    <img class = "my-item-image" src = "{{ group[0].imgurl }}">
-                    {{ group[0].imgurl }}
+                    <img class = "my-item-image" src = "{{ group[0].imgurl }}" alt = "{{ group[0].imgurl }}">
+                    <br>
                     <input type="checkbox" name="{{ group[0].item_id }}" value=1>
                 </div>
                 <div class = "span3">
-                    <img class = "my-item-image" src = "{{ group[1].imgurl }}">
-                    {{ group[1].imgurl }}
+                    <img class = "my-item-image" src = "{{ group[1].imgurl }}" alt = "{{ group[1].imgurl }}">
+                    <br>
                     <input type="checkbox" name="{{ group[1].item_id }}" value=1>
                 </div>
                 <div class = "span3">
-                    <img class = "my-item-image" src = "{{ group[2].imgurl }}">
-                    {{ group[2].imgurl }}
+                    <img class = "my-item-image" src = "{{ group[2].imgurl }}" alt = "{{ group[2].imgurl }}">
+                    <br>
                     <input type="checkbox" name="{{ group[2].item_id }}" value=1>
                 </div>
                 <div class = "span3">
-                    <img class = "my-item-image" src = "{{ group[3].imgurl }}">
-                    {{ group[3].imgurl }}
+                    <img class = "my-item-image" src = "{{ group[3].imgurl }}" alt = "{{ group[3].imgurl }}">
+                    <br>
                     <input type="checkbox" name="{{ group[3].item_id }}" value=1>
                 </div>
             </div>
 
         {% endfor %}
 
-        <div class="my-footer">
-                <input type="submit" value="continue" class = "my-button">
+        <div class="my-button-footer">
+                <input type="submit" value=" continue " class = "my-button">
         </div>
 
     </form>
 
+    </div>
+
     <!-- Footer -->
+
+    <div class = "my-line-separator">
+        line
+    </div>
 
     <div class="my-footer">
         <a href = "{{  url_for("next_inventory")  }}">give me some different options</a> | 

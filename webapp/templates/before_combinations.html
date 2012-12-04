@@ -8,6 +8,10 @@
 		Now what?
 	</div>
 
+    <div class = "my-line-separator">
+        line
+    </div>
+
 	<div class = "my-explanation">
 	<div id = "my-transition-text">
 		when you wake up in the morning, we bet you always reach for the same old t-shirt and jeans. or maybe you search through the laundry basket in search of the first two items that are clean. those cropped sweatpants totally go with a plaid shirt, right? meanwhile, you're letting a crazy pair of vintage stacked-heel leopard booties gather dust in your closet because you haven't figured out "the right way to wear them" yet.
@@ -25,28 +29,30 @@
 
 	<div class = "row-fluid">
 		<div class = "span3">
-			<img class = "my-item-image" src = "{{ selected_inventory[0].imgurl }}">
-			{{ selected_inventory[0].imgurl }}
+			<img class = "my-item-image" src = "{{ selected_inventory[0].imgurl }}" alt = "{{ selected_inventory[0].imgurl }}">
 		</div>
 		<div class = "span3">
-			<img class = "my-item-image" src = "{{ selected_inventory[1].imgurl }}">
-			{{ selected_inventory[1].imgurl }}
+			<img class = "my-item-image" src = "{{ selected_inventory[1].imgurl }}" alt = "{{ selected_inventory[1].imgurl }}">
 		</div>
 		<div class = "span3">
-			<img class = "my-item-image" src = "{{ selected_inventory[2].imgurl }}">
-			{{ selected_inventory[2].imgurl }}
+			<img class = "my-item-image" src = "{{ selected_inventory[2].imgurl }}" alt = "{{ selected_inventory[2].imgurl }}">
 		</div>
 		<div class = "span3">
-			<img class = "my-item-image" src = "{{ selected_inventory[3].imgurl }}">
-			{{ selected_inventory[3].imgurl }}
+			<img class = "my-item-image" src = "{{ selected_inventory[3].imgurl }}" alt = "{{ selected_inventory[3].imgurl }}">
 		</div>
 	</div>
 
 	<!-- Footer -->
 
-    <div class="my-footer">
-        <a href = "{{  url_for("combinations")  }}">ready to get inspired?</a>
+    <div class="my-button-footer">
+        <a href = "{{  url_for("combinations")  }}">ready to get inspired? >></a>
     </div>
+
+    <div class = "my-line-separator">
+        line
+    </div>
+
+
 
 
 {% endblock %}

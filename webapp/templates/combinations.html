@@ -1,7 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
 
-
     <!-- Heading for Sets section -->
 
     {% if which_run == "initial" %}
@@ -27,20 +26,23 @@
 
     {% endif %}
 
-
     <!-- Showing the sets -->
+
+    <div class = "my-line-separator">
+        line
+    </div>
 
     {% for set in existing_sets %}
         <div class = "my-set">
-            <img src = "{{ set.imgurl }}">
-            {{ set.imgurl }} <br>
-            Items matching: {{ set.items_matching }} <br>
-            Items missing: {{ set.items_missing }}
+            <img src = "{{ set.imgurl }}" alt = "{{ set.imgurl }}">
         </div>
     {% endfor %}
 
-
     <!-- Heading for the Suggested Items section -->
+
+    <div class = "my-line-separator">
+        line
+    </div>
 
     {% if which_run == "initial" %}
 
@@ -69,42 +71,50 @@
 
     <!-- Grid for suggested items -->
 
+    <div class = "my-line-separator">
+        line
+    </div>
+
     <form action = "{{  url_for("combinations")  }}" method = "POST">
 
         {% for group in suggested_items %}
 
             <div class="row-fluid">
                 <div class = "span3">
-                    <img class = "my-item-image" src = "{{ group[0].imgurl }}">
-                    {{ group[0].imgurl }}
+                    <img class = "my-item-image" src = "{{ group[0].imgurl }}" alt = "{{ group[0].imgurl }}">
+                    <br>
                     <input type="checkbox" name="{{ group[0].item_id }}" value=1>
                 </div>
                 <div class = "span3">
-                    <img class = "my-item-image" src = "{{ group[1].imgurl }}">
-                    {{ group[1].imgurl }}
+                    <img class = "my-item-image" src = "{{ group[1].imgurl }}" alt = "{{ group[1].imgurl }}">
+                    <br>
                     <input type="checkbox" name="{{ group[1].item_id }}" value=1>
                 </div>
                 <div class = "span3">
-                    <img class = "my-item-image" src = "{{ group[2].imgurl }}">
-                    {{ group[2].imgurl }}
+                    <img class = "my-item-image" src = "{{ group[2].imgurl }}" alt = "{{ group[2].imgurl }}">
+                    <br>
                     <input type="checkbox" name="{{ group[2].item_id }}" value=1>
                 </div>
                 <div class = "span3">
-                    <img class = "my-item-image" src = "{{ group[3].imgurl }}">
-                    {{ group[3].imgurl }}
+                    <img class = "my-item-image" src = "{{ group[3].imgurl }}" alt = "{{ group[3].imgurl }}">
+                    <br>
                     <input type="checkbox" name="{{ group[3].item_id }}" value=1>
                 </div>
             </div>
 
         {% endfor %}
 
-        <div class="my-footer">
-                <input type="submit" value="what happens if I add these?" class = "my-button">
+        <div class="my-button-footer">
+                <input type="submit" value=" what happens if I add these? " class = "my-button">
         </div>
 
     </form>
 
     <!-- Footer at the bottom -->
+
+    <div class = "my-line-separator">
+        line
+    </div>
 
     <div class="my-footer">
         <a href = "{{  url_for("clear_hypotheticals")  }}">return to original results</a> | 

@@ -13,22 +13,24 @@
 
 
 .my-heading{
-  color: red;
-  font-family: Georgia;
+  color: black;
   font-size: 300%;
   text-align: center;
-  font-style: italic;
-  border: 1px solid lightgray;
+  font-weight: bolder;
+/*  border: 1px solid lightgray;*/
   padding: 20px;
   margin-top: 30px;
+  /*letter-spacing: 1px;*/
 }
 
 .my-explanation{
-  color: red;
+  color: gray;
   text-align: center;
   font-size: 120%;
-  border: 1px solid lightgray;
+/*  border: 1px solid lightgray;*/
   padding: 5px;
+  margin-bottom: 20px;
+  font-family: "Courier New";
 }
 
 #my-transition-text{
@@ -39,13 +41,21 @@
 
 .my-button{
   margin: auto;
+  background-color: black;
+  color: white;
+  box-shadow: 0 0 0 #000000;
 }
 
 .my-footer{
-  border: 1px solid lightgray;
+/*  border: 1px solid lightgray;*/
   text-align: center;
-  margin-bottom: 10px;
   margin-top: 10px;
+}
+
+.my-button-footer{
+/*  border: 1px solid lightblue;*/
+  text-align: center;
+  margin-bottom: 40px;
 }
 
 
@@ -56,48 +66,60 @@
 }
 
 .my-set{
-  border: 1px solid red;
+/*  border: 1px solid red;*/
   width: 300px;
-  height: 400px;
-  margin: auto;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+  margin-bottom: 50px;
 }
 
 #my-larger-text{
   font-size: 120%;
   font-weight: bold;
+  color: black;
 }
 
 .my-item-image{
-  height: 150px;
+  height: 135px;
   overflow: hidden;
+  margin: auto;
 }
 
+.my-item-grid-container{
+  background-color: #ffffff;
+/*  border: 1px solid green;*/
+}
+
+.my-line-separator{
+  background-color: black;
+  height: 2px;
+  overflow: hidden;
+}
 
 /*These are also specified elsewhere in bootstrap default. Put borders for testing purposes.*/
 
 .container{
-  border: 1px solid #ff0000;
-  padding: 10px;
+  border: 1px solid #ffffff;
+  padding: 0px;
   margin-top: 50px;
-  margin-bottom: 50px;
+  margin-bottom: 150px;
+  background-color: #ffffff;
 }
 
 .row-fluid{
-  border: 1px solid green;
+/*  border: 1px solid green;*/
   height: 200px;  /* to accommodate dimensions of polyvore pictures */
   margin-top: 20px;
 }
 
 .span3{
-  border: 1px solid red;
+/*  border: 1px solid red;*/
   text-align: center;
   height: 100%;
 }
 
-
-
+/****** Change the body background in the bootstrap stuff below *****/
 
 
 
@@ -262,7 +284,7 @@ body {
   font-size: 14px;
   line-height: 20px;
   color: #333333;
-  background-color: #ffffff;
+/*  background-color: gray;*/
 }
 
 a {

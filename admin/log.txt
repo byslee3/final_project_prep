@@ -258,13 +258,9 @@ Sunday - Dec 2
 
 Monday - Dec 3
 
-1. Put nice colors and graphics throughout
-2. Inevitable debugging
-        Quick fix for the Sets matching: make the cutoff more stringent
-3. Cool image for the start page
--------------------------------------------------------------------------------
-4. Read through Flask documentation / make Sets page into carousel / do nothing
-5. Write blog post sometime
+* Put nice colors and graphics throughout
+* Tried making the cutoff for matching Sets more stringent but it didn't look good that way
+* Started making Sets into a carousel...
 
 
 
@@ -292,7 +288,7 @@ NOT OPTIONAL:
     This will probably take a week anyway.
 
 OPTION 1:
-    Refine and fix algorithms --> making sure they work properly
+    Refine and fix algorithms --> making sure they work properly. all the places where I wrote "FIX THIS LATER"
     Refine and fix algorithms --> optimize for speed. don't query the database a lot. deal with item imgurls.
 
 OPTION 2A:
@@ -306,7 +302,7 @@ OPTION 3:
     Figure out how to host this --> Really want to do this
     Add threading and ability to create user accounts. Currently everything relies on global variables.
     Implement JavaScript and refine UI
-    Make the Sets page into a carousel
+    Make the Sets page into a carousel --> Really want to do this as well!
 
 =============================================
 =============== Summarized ==================
